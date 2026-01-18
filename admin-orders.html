@@ -7,92 +7,98 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* Custom scrollbar for table */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F0FDF4; }
+        ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
+    </style>
 </head>
-<body class="bg-[#FDF8F5] text-[#3E2723] font-sans">
+<body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
 
     <div class="flex min-h-screen">
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#5D4037] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
-            <div class="p-8 text-center">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#064E3B] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
+            <div class="p-8 border-b border-emerald-800/50">
                 <h1 class="text-2xl font-black italic flex items-center justify-center gap-2">
                     <i data-lucide="box"></i> PMM Welfare.
                 </h1>
             </div>
             <nav class="mt-6 px-4 space-y-2">
-    <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
-        <i data-lucide="layout-dashboard"></i> Dashboard
-    </a>
-    
-    <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
-        <i data-lucide="clipboard-list"></i> Bin Card
-    </a>
-    
-    <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
-        <i data-lucide="package"></i> Store Items
-    </a>
-    
-    <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
-        <i data-lucide="shopping-bag"></i> Orders
-    </a>
-    
-    <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition group">
-        <i data-lucide="users"></i> Staff Members
-    </a>
+                <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </a>
+                
+                <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
+                    <i data-lucide="clipboard-list"></i> Bin Card
+                </a>
+                
+                <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
+                    <i data-lucide="package"></i> Store Items
+                </a>
+                
+                <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition">
+                    <i data-lucide="shopping-bag"></i> Orders
+                </a>
+                
+                <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
+                    <i data-lucide="users"></i> Staff Members
+                </a>
 
-    <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition group">
-        <i data-lucide="settings"></i> System Settings
-    </a>
+                <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
+                    <i data-lucide="settings"></i> System Settings
+                </a>
 
-    <div class="pt-20">
-        <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
-            <i data-lucide="log-out"></i> Logout
-        </button>
-    </div>
-</nav>
+                <div class="pt-20">
+                    <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
+                        <i data-lucide="log-out"></i> Logout
+                    </button>
+                </div>
+            </nav>
         </aside>
 
         <main class="flex-1 lg:ml-64 p-4 lg:p-10">
             <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
-                    <h2 class="text-3xl font-black text-[#5D4037]">Order Management</h2>
-                    <p class="text-[#8D6E63] font-medium italic">Track lifecycle from Pending to Completed</p>
+                    <h2 class="text-3xl font-black text-[#064E3B]">Order Management</h2>
+                    <p class="text-[#059669] font-medium italic">Track lifecycle from Pending to Completed</p>
                 </div>
-                <div class="bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#F5EBE0] text-right">
-                    <p class="font-black text-[#5D4037]" id="adminNameDisplay">Admin</p>
-                    <p class="text-[10px] uppercase tracking-widest text-[#8D6E63] font-bold">Main Admin</p>
+                <div class="bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#DCFCE7] text-right">
+                    <p class="font-black text-[#064E3B]" id="adminNameDisplay">Admin</p>
+                    <p class="text-[10px] uppercase tracking-widest text-[#059669] font-bold">Main Admin</p>
                 </div>
             </header>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-[2.5rem] border border-[#F5EBE0] shadow-sm flex items-center gap-6">
-                    <div class="bg-green-100 p-4 rounded-3xl text-green-600"><i data-lucide="trending-up"></i></div>
+                <div class="bg-white p-6 rounded-[2.5rem] border border-[#DCFCE7] shadow-sm flex items-center gap-6">
+                    <div class="bg-emerald-100 p-4 rounded-3xl text-emerald-600"><i data-lucide="trending-up"></i></div>
                     <div>
-                        <p class="text-[10px] font-bold text-[#8D6E63] uppercase tracking-widest">Total Staff Savings</p>
-                        <p class="text-2xl font-black text-green-600" id="totalSavingsDisplay">Rs. 0.00</p>
+                        <p class="text-[10px] font-bold text-[#059669] uppercase tracking-widest">Total Staff Savings</p>
+                        <p class="text-2xl font-black text-emerald-600" id="totalSavingsDisplay">Rs. 0.00</p>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-[2.5rem] border border-[#F5EBE0] shadow-sm flex items-center gap-6">
-                    <div class="bg-brown-100 p-4 rounded-3xl text-[#5D4037]" style="background-color: #F5EBE0;"><i data-lucide="shopping-cart"></i></div>
+                <div class="bg-white p-6 rounded-[2.5rem] border border-[#DCFCE7] shadow-sm flex items-center gap-6">
+                    <div class="bg-emerald-50 p-4 rounded-3xl text-[#064E3B]"><i data-lucide="shopping-cart"></i></div>
                     <div>
-                        <p class="text-[10px] font-bold text-[#8D6E63] uppercase tracking-widest">Total Welfare Sales</p>
-                        <p class="text-2xl font-black text-[#5D4037]" id="totalRevenueDisplay">Rs. 0.00</p>
+                        <p class="text-[10px] font-bold text-[#059669] uppercase tracking-widest">Total Welfare Sales</p>
+                        <p class="text-2xl font-black text-[#064E3B]" id="totalRevenueDisplay">Rs. 0.00</p>
                     </div>
                 </div>
             </div>
 
             <div class="flex flex-col md:flex-row gap-6 mb-8 items-end">
-                <div class="bg-white p-2 rounded-[2rem] shadow-sm border border-[#F5EBE0] flex gap-1 overflow-x-auto">
-                    <button onclick="setStatusFilter('all')" id="tab-all" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition bg-[#5D4037] text-white shadow-lg">All</button>
-                    <button onclick="setStatusFilter('Pending')" id="tab-Pending" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#8D6E63] hover:bg-[#FDF8F5]">Pending</button>
-                    <button onclick="setStatusFilter('Dispatched')" id="tab-Dispatched" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#8D6E63] hover:bg-[#FDF8F5]">Dispatched</button>
-                    <button onclick="setStatusFilter('Completed')" id="tab-Completed" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#8D6E63] hover:bg-[#FDF8F5]">Completed</button>
+                <div class="bg-white p-2 rounded-[2rem] shadow-sm border border-[#DCFCE7] flex gap-1 overflow-x-auto">
+                    <button onclick="setStatusFilter('all')" id="tab-all" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition bg-[#059669] text-white shadow-lg">All</button>
+                    <button onclick="setStatusFilter('Pending')" id="tab-Pending" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Pending</button>
+                    <button onclick="setStatusFilter('Dispatched')" id="tab-Dispatched" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Dispatched</button>
+                    <button onclick="setStatusFilter('Completed')" id="tab-Completed" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Completed</button>
                 </div>
             </div>
 
-            <div class="bg-white rounded-[3rem] shadow-sm border border-[#F5EBE0] overflow-hidden">
+            <div class="bg-white rounded-[3rem] shadow-sm border border-[#DCFCE7] overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead>
-                            <tr class="bg-[#FDF8F5] text-[#8D6E63] text-[10px] uppercase tracking-widest border-b border-[#F5EBE0]">
+                            <tr class="bg-[#F0FDF4] text-[#059669] text-[10px] uppercase tracking-widest border-b border-[#DCFCE7]">
                                 <th class="p-6">Order Details</th>
                                 <th class="p-6">Staff Member</th>
                                 <th class="p-6 text-center">Status</th>
@@ -100,7 +106,7 @@
                                 <th class="p-6 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="ordersTableBody" class="text-sm font-medium">
+                        <tbody id="ordersTableBody" class="text-sm font-medium text-[#064E3B]">
                         </tbody>
                     </table>
                 </div>
@@ -128,7 +134,7 @@
         const db = getFirestore(app);
 
         let currentStatusFilter = 'all';
-        let unsubscribeOrders = null; // පරණ ලිස්නර් එක නවත්වන්න මේක ඕනේ
+        let unsubscribeOrders = null;
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -139,20 +145,16 @@
                 } else { window.location.href = "admin-login.html"; }
             } else { window.location.href = "admin-login.html"; }
         });
+
 window.loadOrders = () => {
     const tableBody = document.getElementById('ordersTableBody');
-    
-    // කලින් තිබ්බ listener එකක් තියෙනවා නම් ඒක නවත්වන්න (Duplicate වීම වැලැක්වීමට)
-    if (unsubscribeOrders) {
-        unsubscribeOrders();
-    }
+    if (unsubscribeOrders) unsubscribeOrders();
 
     const constraints = [];
     if (currentStatusFilter !== 'all') constraints.push(where("status", "==", currentStatusFilter));
 
     const q = query(collection(db, "orders"), ...constraints, orderBy("createdAt", "desc"));
 
-    // අලුත් listener එක assign කරගන්න
     unsubscribeOrders = onSnapshot(q, (snap) => {
         tableBody.innerHTML = '';
         let totalRev = 0;
@@ -163,51 +165,55 @@ window.loadOrders = () => {
             const id = d.id;
             const status = order.status || "Pending";
             
-            totalRev += order.total || 0;
-            totalSave += order.savings || 0;
+            if(status !== "Cancelled") {
+                totalRev += order.total || 0;
+                totalSave += order.savings || 0;
+            }
 
             let statusBadge = "";
             let actionBtn = "";
 
             if (status === "Pending") {
-                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-orange-100 text-orange-600 uppercase tracking-widest">Pending</span>`;
-                // බටන් දෙකම මෙතන දාලා තියෙනවා (Dispatch සහ Complete)
+                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-amber-100 text-amber-600 uppercase tracking-widest">Pending</span>`;
                 actionBtn = `
                     <div class="flex gap-2 justify-end">
                         <button onclick="updateOrderStatus('${id}', 'Dispatched')" class="bg-white border-2 border-blue-600 text-blue-600 p-2 px-4 rounded-xl hover:bg-blue-600 hover:text-white transition duration-300 flex items-center gap-2 text-[10px] font-black uppercase">
                             Dispatch <i data-lucide="truck" class="w-3 h-3"></i>
                         </button>
-                        <button onclick="updateOrderStatus('${id}', 'Completed')" class="bg-white border-2 border-green-600 text-green-600 p-2 px-4 rounded-xl hover:bg-green-600 hover:text-white transition duration-300 flex items-center gap-2 text-[10px] font-black uppercase">
+                        <button onclick="updateOrderStatus('${id}', 'Completed')" class="bg-white border-2 border-emerald-600 text-emerald-600 p-2 px-4 rounded-xl hover:bg-emerald-600 hover:text-white transition duration-300 flex items-center gap-2 text-[10px] font-black uppercase">
                             Complete <i data-lucide="check" class="w-3 h-3"></i>
                         </button>
                     </div>`;
             } else if (status === "Dispatched") {
                 statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-blue-100 text-blue-600 uppercase tracking-widest">Dispatched</span>`;
-                actionBtn = `<button onclick="updateOrderStatus('${id}', 'Completed')" class="bg-white border-2 border-green-600 text-green-600 p-2 px-4 rounded-xl hover:bg-green-600 hover:text-white transition duration-300 flex items-center gap-2 text-[10px] font-black uppercase">Complete <i data-lucide="check" class="w-3 h-3"></i></button>`;
+                actionBtn = `<button onclick="updateOrderStatus('${id}', 'Completed')" class="bg-white border-2 border-emerald-600 text-emerald-600 p-2 px-4 rounded-xl hover:bg-emerald-600 hover:text-white transition duration-300 flex items-center gap-2 text-[10px] font-black uppercase">Complete <i data-lucide="check" class="w-3 h-3"></i></button>`;
+            } else if (status === "Cancelled") {
+                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-red-100 text-red-600 uppercase tracking-widest">Cancelled</span>`;
+                actionBtn = `<div class="text-red-300 p-2"><i data-lucide="x-circle" class="w-5 h-5"></i></div>`;
             } else {
-                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-green-100 text-green-600 uppercase tracking-widest flex items-center justify-center gap-1 mx-auto w-fit"><i data-lucide="shield-check" class="w-3 h-3"></i> Completed</span>`;
-                actionBtn = `<div class="bg-green-600 text-white p-2 rounded-full"><i data-lucide="check-check" class="w-4 h-4"></i></div>`;
+                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-600 uppercase tracking-widest flex items-center justify-center gap-1 mx-auto w-fit"><i data-lucide="shield-check" class="w-3 h-3"></i> Completed</span>`;
+                actionBtn = `<div class="bg-emerald-600 text-white p-2 rounded-full"><i data-lucide="check-check" class="w-4 h-4"></i></div>`;
             }
 
             tableBody.innerHTML += `
-                <tr class="border-b border-[#FDF8F5] hover:bg-[#FDF8F5] transition">
+                <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4] transition">
                     <td class="p-6">
-                        <p class="font-black text-[#5D4037]">${order.itemName}</p>
-                        <p class="text-[10px] text-[#8D6E63] font-bold uppercase">Qty: ${order.qty} | #${id.substring(0,8)}</p>
+                        <p class="font-black text-[#064E3B]">${order.itemName}</p>
+                        <p class="text-[10px] text-[#059669] font-bold uppercase">Qty: ${order.qty} | #${id.substring(0,8)}</p>
                     </td>
                     <td class="p-6">
-                        <p class="font-bold text-sm">${order.staffName}</p>
-                        <p class="text-[10px] text-[#8D6E63] uppercase">${order.userPosition}</p>
+                        <p class="font-bold text-sm text-[#064E3B]">${order.staffName}</p>
+                        <p class="text-[10px] text-[#059669] uppercase tracking-tighter italic">${order.userPosition}</p>
                     </td>
                     <td class="p-6 text-center">${statusBadge}</td>
                     <td class="p-6">
-                        <p class="font-black text-[#5D4037]">Rs. ${order.total.toLocaleString()}</p>
-                        <p class="text-[9px] text-green-600 font-bold uppercase">Saving: Rs. ${order.savings.toLocaleString()}</p>
+                        <p class="font-black text-[#064E3B]">Rs. ${order.total.toLocaleString()}</p>
+                        <p class="text-[9px] text-emerald-600 font-bold uppercase tracking-tight">Saving: Rs. ${order.savings.toLocaleString()}</p>
                     </td>
                     <td class="p-6 text-right">
                         <div class="flex justify-end items-center gap-3">
                             ${actionBtn}
-                            <button onclick="downloadAdminInvoice('${id}')" class="bg-[#5D4037] text-white p-2 rounded-xl hover:bg-[#3E2723] transition"><i data-lucide="download" class="w-4 h-4"></i></button>
+                            <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2 rounded-xl hover:bg-[#064E3B] transition shadow-md"><i data-lucide="download" class="w-4 h-4"></i></button>
                         </div>
                     </td>
                 </tr>`;
@@ -233,9 +239,9 @@ window.loadOrders = () => {
         window.setStatusFilter = (status) => {
             currentStatusFilter = status;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#8D6E63] hover:bg-[#FDF8F5]";
+                btn.className = "tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]";
             });
-            document.getElementById('tab-' + status).className = "tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition bg-[#5D4037] text-white shadow-lg";
+            document.getElementById('tab-' + status).className = "tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition bg-[#059669] text-white shadow-lg";
             loadOrders();
         };
 
@@ -246,13 +252,31 @@ window.loadOrders = () => {
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
                 pdf.setFont("helvetica", "bold");
+                pdf.setTextColor(5, 150, 105); // Emerald Green
                 pdf.text("PMM WELFARE RECEIPT", 50, 15, { align: "center" });
+                
+                pdf.setTextColor(0, 0, 0);
                 pdf.setFontSize(10);
-                pdf.text(`Status: ${data.status.toUpperCase()}`, 10, 30);
-                pdf.text(`Staff: ${data.staffName}`, 10, 40);
-                pdf.text(`Item: ${data.itemName}`, 10, 50);
-                pdf.text(`Total: Rs. ${data.total}`, 10, 60);
-                pdf.text(`Savings: Rs. ${data.savings}`, 10, 70);
+                pdf.text(`Order ID: #${orderId.substring(0,8)}`, 10, 30);
+                pdf.text(`Status: ${data.status.toUpperCase()}`, 10, 35);
+                pdf.text(`Date: ${data.createdAt?.toDate().toLocaleDateString()}`, 10, 40);
+                
+                pdf.text("------------------------------------------", 50, 45, { align: "center" });
+                
+                pdf.text(`Staff: ${data.staffName}`, 10, 55);
+                pdf.text(`Role: ${data.userPosition}`, 10, 60);
+                
+                pdf.setFont("helvetica", "bold");
+                pdf.text(`Item: ${data.itemName}`, 10, 75);
+                pdf.setFont("helvetica", "normal");
+                pdf.text(`Qty: ${data.qty}`, 10, 80);
+                
+                pdf.setFont("helvetica", "bold");
+                pdf.text(`Welfare Price: Rs. ${data.total.toLocaleString()}`, 10, 95);
+                
+                pdf.setTextColor(5, 150, 105);
+                pdf.text(`Total Staff Savings: Rs. ${data.savings.toLocaleString()}`, 10, 105);
+                
                 pdf.save(`Order_${orderId.substring(0,4)}.pdf`);
             }
         };

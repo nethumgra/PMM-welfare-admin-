@@ -6,33 +6,39 @@
     <title>Staff & Roles - PMM Welfare Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F0FDF4; }
+        ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
+    </style>
 </head>
-<body class="bg-[#FDF8F5] text-[#3E2723] font-sans">
+<body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
 
-    <div id="editModal" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border border-[#F5EBE0]">
+    <div id="editModal" class="fixed inset-0 bg-[#064E3B]/60 hidden z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border border-white/20">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black italic text-[#5D4037]">Edit Staff Member</h3>
-                <button onclick="closeEditModal()" class="text-slate-400 hover:text-red-500 transition">
-                    <i data-lucide="x-circle"></i>
+                <h3 class="text-xl font-black italic text-[#064E3B]">Edit Staff Member</h3>
+                <button onclick="closeEditModal()" class="text-emerald-300 hover:text-red-500 transition">
+                    <i data-lucide="x-circle" class="w-8 h-8"></i>
                 </button>
             </div>
             <input type="hidden" id="editUid">
             <div class="space-y-4">
                 <div>
-                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2 tracking-widest">Full Name</label>
-                    <input type="text" id="editName" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
+                    <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Full Name</label>
+                    <input type="text" id="editName" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] text-[#064E3B] font-bold">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2 tracking-widest">Staff ID</label>
-                    <input type="text" id="editStaffId" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
+                    <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Staff ID</label>
+                    <input type="text" id="editStaffId" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] text-[#064E3B] font-bold">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2 tracking-widest">Position / Role</label>
-                    <select id="editPosition" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] font-bold">
+                    <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Position / Role</label>
+                    <select id="editPosition" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
                     </select>
                 </div>
-                <button id="saveEditBtn" class="w-full bg-[#5D4037] text-white p-5 rounded-2xl font-black hover:bg-[#3E2723] transition shadow-xl mt-4">
+                <button id="saveEditBtn" class="w-full bg-[#059669] text-white p-5 rounded-3xl font-black hover:bg-[#047857] transition shadow-xl mt-4">
                     Save Changes
                 </button>
             </div>
@@ -40,74 +46,69 @@
     </div>
 
     <div class="flex min-h-screen">
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#5D4037] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
-            <div class="p-8 text-center">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#064E3B] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
+            <div class="p-8 text-center border-b border-emerald-800/50">
                 <h1 class="text-2xl font-black italic flex items-center justify-center gap-2">
                     <i data-lucide="box"></i> PMM Welfare.
                 </h1>
             </div>
           <nav class="mt-6 px-4 space-y-2">
-    <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
-        <i data-lucide="layout-dashboard"></i> Dashboard
-    </a>
-    
-    <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
-        <i data-lucide="clipboard-list"></i> Bin Card
-    </a>
-    
-    <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
-        <i data-lucide="package"></i> Store Items
-    </a>
-    
-    <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
-        <i data-lucide="shopping-bag"></i> Orders
-    </a>
-    
-    <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition group">
-        <i data-lucide="users"></i> Staff Members
-    </a>
+            <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
+                <i data-lucide="clipboard-list"></i> Bin Card
+            </a>
+            <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
+                <i data-lucide="package"></i> Store Items
+            </a>
+            <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
+                <i data-lucide="shopping-bag"></i> Orders
+            </a>
+            <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition group">
+                <i data-lucide="users"></i> Staff Members
+            </a>
+            <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
+                <i data-lucide="settings"></i> System Settings
+            </a>
 
-    <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition group">
-        <i data-lucide="settings"></i> System Settings
-    </a>
-
-    <div class="pt-20">
-        <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
-            <i data-lucide="log-out"></i> Logout
-        </button>
-    </div>
-</nav>
+            <div class="pt-20">
+                <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
+                    <i data-lucide="log-out"></i> Logout
+                </button>
+            </div>
+        </nav>
         </aside>
 
         <main class="flex-1 lg:ml-64 p-4 lg:p-10">
             <header class="flex justify-between items-center mb-10">
-                <h2 class="text-3xl font-black text-[#5D4037]">Staff & Role Management</h2>
-                <div class="text-right bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#F5EBE0]">
-                    <p class="font-black text-[#5D4037]" id="adminNameDisplay">Admin</p>
-                    <p class="text-[10px] uppercase tracking-widest text-[#8D6E63] font-bold">Main Admin</p>
+                <h2 class="text-3xl font-black text-[#064E3B]">Staff & Role Management</h2>
+                <div class="text-right bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#DCFCE7]">
+                    <p class="font-black text-[#064E3B]" id="adminNameDisplay">Admin</p>
+                    <p class="text-[10px] uppercase tracking-widest text-[#059669] font-bold">Main Admin</p>
                 </div>
             </header>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-1">
-                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#F5EBE0]">
-                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#5D4037]">
-                            <i data-lucide="shield-plus"></i> Create New Role
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
+                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#064E3B]">
+                            <i data-lucide="shield-plus" class="text-[#059669]"></i> Create New Role
                         </h3>
                         <div class="space-y-4">
                             <div>
-                                <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Role Name</label>
-                                <input type="text" id="newRoleName" placeholder="Ex: Manager" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
+                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-wide">Role Name</label>
+                                <input type="text" id="newRoleName" placeholder="Ex: Manager" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] text-[#064E3B] font-bold">
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Monthly Spending Limit (Rs.)</label>
-                                <input type="number" id="newRoleLimit" placeholder="Ex: 15000" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] font-bold">
+                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-wide">Monthly Spend Limit (Rs.)</label>
+                                <input type="number" id="newRoleLimit" placeholder="Ex: 15000" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-black text-[#064E3B]">
                             </div>
-                            <button id="addRoleBtn" class="w-full bg-[#5D4037] text-white px-6 py-4 rounded-2xl font-black hover:bg-[#3E2723] transition">Create Role</button>
+                            <button id="addRoleBtn" class="w-full bg-[#059669] text-white px-6 py-4 rounded-2xl font-black hover:bg-[#047857] transition shadow-lg shadow-emerald-100">Create Role</button>
                         </div>
                         
-                        <div class="mt-8 border-t border-[#F5EBE0] pt-6">
-                            <h4 class="text-[10px] font-black text-[#8D6E63] uppercase mb-4 tracking-widest">Existing Roles & Limits</h4>
+                        <div class="mt-8 border-t border-[#F0FDF4] pt-6">
+                            <h4 class="text-[10px] font-black text-[#059669] uppercase mb-4 tracking-widest">Existing Roles & Limits</h4>
                             <div id="rolesList" class="space-y-3">
                                 </div>
                         </div>
@@ -115,29 +116,30 @@
                 </div>
 
                 <div class="lg:col-span-2">
-                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#F5EBE0]">
-                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#5D4037]">
-                            <i data-lucide="user-plus"></i> Register Staff Member
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
+                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#064E3B]">
+                            <i data-lucide="user-plus" class="text-[#059669]"></i> Register Staff Member
                         </h3>
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="text" id="staffName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
-                                <input type="text" id="assignStaffId" placeholder="Staff ID" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
+                                <input type="text" id="staffName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
+                                <input type="text" id="assignStaffId" placeholder="Staff ID (Ex: STF-001)" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <select id="staffPosition" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] font-bold"></select>
-                                <input type="email" id="staffEmail" placeholder="Email" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
+                                <select id="staffPosition" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]"></select>
+                                <input type="email" id="staffEmail" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
                             </div>
-                            <input type="password" id="staffPassword" placeholder="Temp Password" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
-                            <button id="regStaffBtn" class="w-full bg-[#5D4037] text-white p-5 rounded-2xl font-black hover:bg-[#3E2723] transition shadow-xl">Register Staff Member</button>
+                            <input type="password" id="staffPassword" placeholder="Temp Password" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
+                            <button id="regStaffBtn" class="w-full bg-[#059669] text-white p-5 rounded-2xl font-black hover:bg-[#047857] transition shadow-xl shadow-emerald-100">Register Staff Member</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-3">
-                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#F5EBE0]">
-                        <h3 class="text-xl font-black mb-6">Staff Directory</h3>
-                        <div id="staffListDirectory" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+                    <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-[#DCFCE7]">
+                        <h3 class="text-xl font-black text-[#064E3B] mb-6">Staff Directory</h3>
+                        <div id="staffListDirectory" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            </div>
                     </div>
                 </div>
             </div>
@@ -173,7 +175,7 @@
             } else { window.location.href = "admin-login.html"; }
         });
 
-        // Add Role with Monthly Limit
+        // Add Role
         document.getElementById('addRoleBtn').addEventListener('click', async () => {
             const name = document.getElementById('newRoleName').value;
             const limit = document.getElementById('newRoleLimit').value;
@@ -192,7 +194,7 @@
             } catch (e) { alert(e.message); }
         });
 
-        // Sync Roles List & Dropdowns
+        // Sync Roles List
         onSnapshot(collection(db, "roles"), (snap) => {
             const list = document.getElementById('rolesList');
             const select = document.getElementById('staffPosition');
@@ -205,18 +207,17 @@
 
             snap.forEach(d => {
                 const role = d.data();
-                // Display in sidebar list
                 list.innerHTML += `
-                    <div class="flex flex-col p-4 bg-[#FDF8F5] rounded-2xl border border-[#F5EBE0] group">
+                    <div class="flex flex-col p-4 bg-[#F0FDF4] rounded-2xl border border-[#DCFCE7] group hover:border-[#059669] transition-all">
                         <div class="flex justify-between items-center">
-                            <span class="font-black text-sm text-[#5D4037]">${role.name}</span>
-                            <button onclick="deleteRole('${d.id}')" class="text-red-300 hover:text-red-500 transition">
+                            <span class="font-black text-sm text-[#064E3B]">${role.name}</span>
+                            <button onclick="deleteRole('${d.id}')" class="text-emerald-300 hover:text-red-500 transition">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
                         <div class="flex items-center gap-1 mt-1">
-                            <span class="text-[9px] font-bold text-[#8D6E63] uppercase">Limit:</span>
-                            <span class="text-[10px] font-black text-green-600">Rs. ${role.monthlyLimit.toLocaleString()}</span>
+                            <span class="text-[9px] font-bold text-[#059669] uppercase">Limit:</span>
+                            <span class="text-[10px] font-black text-emerald-600">Rs. ${role.monthlyLimit.toLocaleString()}</span>
                         </div>
                     </div>`;
                 
@@ -227,7 +228,7 @@
             lucide.createIcons();
         });
 
-        // Staff Registration Logic
+        // Registration Logic
         document.getElementById('regStaffBtn').addEventListener('click', async () => {
             const name = document.getElementById('staffName').value;
             const staffId = document.getElementById('assignStaffId').value;
@@ -257,30 +258,29 @@
             }
         });
 
-        // Staff Directory Update
+        // Directory Update
         onSnapshot(query(collection(db, "users"), where("role", "==", "staff")), (snap) => {
             const directory = document.getElementById('staffListDirectory');
             directory.innerHTML = '';
             snap.forEach(d => {
                 const staff = d.data();
                 directory.innerHTML += `
-                    <div class="p-6 bg-[#FDF8F5] rounded-[2rem] border border-[#F5EBE0] shadow-sm relative group">
-                        <button onclick="openEditModal('${d.id}')" class="absolute top-4 right-4 text-[#8D6E63] hover:text-[#5D4037]"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                    <div class="p-6 bg-[#F0FDF4] rounded-[2rem] border border-[#DCFCE7] shadow-sm relative group hover:border-[#059669] transition-all">
+                        <button onclick="openEditModal('${d.id}')" class="absolute top-4 right-4 text-emerald-300 hover:text-[#064E3B]"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                         <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-[#5D4037] text-white p-3 rounded-2xl shadow-lg"><i data-lucide="user"></i></div>
+                            <div class="bg-[#059669] text-white p-3 rounded-2xl shadow-lg"><i data-lucide="user"></i></div>
                             <div>
-                                <h4 class="font-black text-sm">${staff.name}</h4>
-                                <span class="text-[9px] bg-[#E7D6CC] text-[#5D4037] px-2 py-0.5 rounded-full font-bold uppercase">${staff.position}</span>
+                                <h4 class="font-black text-sm text-[#064E3B]">${staff.name}</h4>
+                                <span class="text-[9px] bg-emerald-100 text-[#059669] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">${staff.position}</span>
                             </div>
                         </div>
-                        <p class="text-[11px] font-bold text-[#5D4037]">ID: ${staff.staffId}</p>
-                        <p class="text-[11px] text-[#8D6E63] truncate mt-1">${staff.email}</p>
+                        <p class="text-[11px] font-black text-[#059669]">ID: ${staff.staffId}</p>
+                        <p class="text-[11px] text-[#059669] truncate mt-1 opacity-70">${staff.email}</p>
                     </div>`;
             });
             lucide.createIcons();
         });
 
-        // UI Window Functions
         window.deleteRole = async (id) => { if(confirm("Delete this role?")) await deleteDoc(doc(db, "roles", id)); };
         
         window.openEditModal = async (uid) => {
