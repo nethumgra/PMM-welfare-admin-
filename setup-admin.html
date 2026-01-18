@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initial Admin Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white min-h-screen flex items-center justify-center p-6">
+
+    <div class="w-full max-w-md bg-zinc-900 p-8 rounded-2xl shadow-2xl border border-red-900/50">
+        <h1 class="text-2xl font-bold mb-2 text-red-500 text-center">Admin Initial Setup</h1>
+        <p class="text-zinc-400 text-center mb-8 text-sm">Use this only once to create the main admin.</p>
+        
+        <div class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium mb-1 text-zinc-300">Admin Name</label>
+                <input type="text" id="adminName" placeholder="Super Admin" 
+                    class="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1 text-zinc-300">Admin Email</label>
+                <input type="email" id="adminEmail" placeholder="admin@company.com" 
+                    class="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1 text-zinc-300">Master Password</label>
+                <input type="password" id="adminPassword" placeholder="••••••••" 
+                    class="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-600 transition">
+            </div>
+
+            <button id="setupBtn" 
+                class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200">
+                Create Super Admin Account
+            </button>
+        </div>
+
+        <p id="msg" class="mt-6 text-center text-sm font-medium"></p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Oyaage Firebase Config eka
+        const firebaseConfig = {
+            apiKey: "AIzaSyB3jlpc_vbUydda2XpDj5Xd1J8kVei9v8U",
+            authDomain: "inventory-c3cca.firebaseapp.com",
+            projectId: "inventory-c3cca",
+            storageBucket: "inventory-c3cca.firebasestorage.app",
+            messagingSenderId: "396140403894",
+            appId: "1:396140403894:web:316617b8e390f8b0575a17",
+            measurementId: "G-YK5X3Z6HER"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const setupBtn = document.getElementById('setupBtn');
+        const msg = document.getElementById('msg');
+
+        setupBtn.addEventListener('click', async () => {
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+
+            if(!name || !email || !password) {
+                msg.innerText = "Fill all fields!";
+                msg.className = "mt-6 text-red-400";
+                return;
+            }
+
+            try {
+                // Admin user wa create kirima
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Firestore eke role eka 'admin' widiyata save kirima
+                await setDoc(doc(db, "users", user.uid), {
+                    name: name,
+                    email: email,
+                    role: "admin",
+                    createdAt: new Date()
+                });
+
+                msg.innerText = "Admin Account Created! Now DELETE THIS FILE.";
+                msg.className = "mt-6 text-green-400 font-bold";
+
+            } catch (error) {
+                msg.innerText = "Error: " + error.message;
+                msg.className = "mt-6 text-red-400";
+            }
+        });
+    </script>
+</body>
+</html>admin-items.html

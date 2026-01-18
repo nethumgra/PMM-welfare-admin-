@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Items - PMM Welfare Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#FDF8F5] text-[#3E2723] font-sans">
+
+    <div class="flex min-h-screen">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#5D4037] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
+            <div class="p-8">
+                <h1 class="text-2xl font-black italic flex items-center gap-2">
+                    <i data-lucide="box"></i> PMM Welfare.
+                </h1>
+            </div>
+         <nav class="mt-6 px-4 space-y-2">
+    <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+    </a>
+    
+    <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
+        <i data-lucide="clipboard-list"></i> Bin Card
+    </a>
+    
+    <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
+        <i data-lucide="package"></i> Store Items
+    </a>
+    
+    <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
+        <i data-lucide="shopping-bag"></i> Orders
+    </a>
+    
+    <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition group">
+        <i data-lucide="users"></i> Staff Members
+    </a>
+
+    <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition group">
+        <i data-lucide="settings"></i> System Settings
+    </a>
+
+    <div class="pt-20">
+        <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
+            <i data-lucide="log-out"></i> Logout
+        </button>
+    </div>
+</nav>
+        </aside>
+
+        <main class="flex-1 lg:ml-64 p-4 lg:p-10">
+            <header class="flex justify-between items-center mb-10">
+                <h2 class="text-3xl font-black">Inventory Management</h2>
+                <div class="text-right bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#F5EBE0]">
+                    <p class="font-black text-[#5D4037]" id="adminNameDisplay">Admin</p>
+                    <p class="text-[10px] uppercase tracking-widest text-[#8D6E63] font-bold">Store Manager</p>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#F5EBE0]">
+                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#5D4037]">
+                            <i data-lucide="plus-circle"></i> Add New Product
+                        </h3>
+                        <div class="space-y-5">
+                            <div>
+                                <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Product Name</label>
+                                <input type="text" id="itemName" placeholder="Ex: Smart Watch" 
+                                    class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] transition">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">MRP Price (Rs.)</label>
+                                    <input type="number" id="mrpPrice" placeholder="0.00" 
+                                        class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] transition font-bold">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Welfare Price (Rs.)</label>
+                                    <input type="number" id="welfarePrice" placeholder="0.00" 
+                                        class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] transition font-bold text-green-600">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Initial Stock</label>
+                                    <input type="number" id="itemStock" placeholder="Qty" 
+                                        class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] transition font-bold">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Initial Status</label>
+                                    <select id="itemStatus" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] font-bold text-sm">
+                                        <option value="In Stock">In Stock</option>
+                                        <option value="Out of Stock">Out of Stock</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-[#FDF8F5] rounded-3xl border border-[#F5EBE0]">
+                                <p class="text-[10px] font-bold text-[#8D6E63] uppercase mb-3">Monthly Item Limits (Qty)</p>
+                                <div id="roleLimitsContainer" class="grid grid-cols-2 gap-3">
+                                    <p class="text-[10px] text-slate-400 italic col-span-2">Loading roles...</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Product Image</label>
+                                <input type="file" id="itemImage" accept="image/*"
+                                    class="w-full p-3 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#5D4037] file:text-white">
+                            </div>
+
+                            <button id="addItemBtn" class="w-full bg-[#5D4037] text-white p-4 rounded-2xl font-black hover:bg-[#3E2723] transition shadow-xl mt-2 flex justify-center items-center gap-2">
+                                <span id="btnText">Add to Inventory</span>
+                                <div id="loader" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#F5EBE0]">
+                        <h3 class="text-lg font-black mb-6">Current Inventory</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-[#8D6E63] text-xs uppercase tracking-widest border-b border-[#FDF8F5]">
+                                        <th class="pb-4">Product</th>
+                                        <th class="pb-4">Price (Welfare)</th>
+                                        <th class="pb-4">Stock</th>
+                                        <th class="pb-4">Status</th>
+                                        <th class="pb-4 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemTableBody" class="text-sm font-medium"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="editItemModal" class="fixed inset-0 bg-black/50 hidden z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-xl rounded-[2.5rem] p-8 shadow-2xl border border-[#F5EBE0]">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-black italic text-[#5D4037]">Edit Product Details</h3>
+                <button onclick="window.closeEditItemModal()" class="text-slate-400 hover:text-red-500 transition">
+                    <i data-lucide="x-circle"></i>
+                </button>
+            </div>
+            <input type="hidden" id="editItemId">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Product Name</label>
+                    <input type="text" id="editItemName" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Stock Qty</label>
+                    <input type="number" id="editItemStock" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">MRP Price</label>
+                    <input type="number" id="editMrpPrice" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037]">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Welfare Price</label>
+                    <input type="number" id="editWelfarePrice" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] text-green-600">
+                </div>
+            </div>
+            <button id="saveItemEditBtn" class="w-full bg-[#5D4037] text-white p-5 rounded-2xl font-black hover:bg-[#3E2723] transition shadow-xl mt-6">
+                Update Inventory
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB3jlpc_vbUydda2XpDj5Xd1J8kVei9v8U",
+            authDomain: "inventory-c3cca.firebaseapp.com",
+            projectId: "inventory-c3cca",
+            storageBucket: "inventory-c3cca.firebasestorage.app",
+            messagingSenderId: "396140403894",
+            appId: "1:396140403894:web:316617b8e390f8b0575a17",
+            measurementId: "G-YK5X3Z6HER"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && userDoc.data().role === "admin") {
+                    document.getElementById('adminNameDisplay').innerText = userDoc.data().name;
+                    setupDynamicRoles();
+                    loadItems();
+                } else { window.location.href = "admin-login.html"; }
+            } else { window.location.href = "admin-login.html"; }
+        });
+
+        function setupDynamicRoles() {
+            onSnapshot(collection(db, "roles"), (snap) => {
+                const container = document.getElementById('roleLimitsContainer');
+                container.innerHTML = '';
+                snap.forEach(d => {
+                    const role = d.data().name;
+                    container.innerHTML += `
+                        <div>
+                            <label class="text-[9px] text-[#8D6E63] font-bold ml-1">${role}</label>
+                            <input type="number" data-role="${role}" placeholder="Qty" 
+                                class="role-limit-input w-full p-3 rounded-xl bg-white border border-[#F5EBE0] text-sm font-bold">
+                        </div>`;
+                });
+            });
+        }
+
+        document.getElementById('addItemBtn').addEventListener('click', async () => {
+            const name = document.getElementById('itemName').value;
+            const mrp = document.getElementById('mrpPrice').value;
+            const welfare = document.getElementById('welfarePrice').value;
+            const stock = document.getElementById('itemStock').value;
+            const status = document.getElementById('itemStatus').value;
+            const imageFile = document.getElementById('itemImage').files[0];
+            
+            const roleLimits = {};
+            document.querySelectorAll('.role-limit-input').forEach(input => {
+                roleLimits[input.dataset.role] = parseInt(input.value) || 0;
+            });
+
+            if(!name || !mrp || !welfare || !stock || !imageFile) { alert("Fill all fields!"); return; }
+
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('loader');
+            btnText.innerText = "Processing...";
+            loader.classList.remove('hidden');
+
+            try {
+                const formData = new FormData();
+                formData.append('image', imageFile);
+                const imgbb = await fetch(`https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07`, { method: 'POST', body: formData });
+                const imgData = await imgbb.json();
+
+                const itemRef = await addDoc(collection(db, "items"), {
+                    name, 
+                    mrpPrice: parseFloat(mrp), 
+                    welfarePrice: parseFloat(welfare), 
+                    stock: parseInt(stock),
+                    status, 
+                    imageUrl: imgData.data.display_url, 
+                    limits: roleLimits, 
+                    createdAt: new Date()
+                });
+
+                await addDoc(collection(db, "inventory_logs"), {
+                    itemId: itemRef.id,
+                    itemName: name,
+                    type: "IN",
+                    qty: parseInt(stock),
+                    balance: parseInt(stock),
+                    createdAt: new Date()
+                });
+
+                alert("Item Added & Bin Card Updated!");
+                location.reload();
+            } catch (e) { alert(e.message); }
+            finally { btnText.innerText = "Add to Inventory"; loader.classList.add('hidden'); }
+        });
+
+        function loadItems() {
+            const itemTable = document.getElementById('itemTableBody');
+            onSnapshot(collection(db, "items"), (snap) => {
+                itemTable.innerHTML = '';
+                snap.forEach(dSnapshot => {
+                    const item = dSnapshot.data();
+                    const id = dSnapshot.id;
+                    const isOutOfStock = (item.status === "Out of Stock" || item.stock <= 0);
+                    const saving = parseFloat(item.mrpPrice) - parseFloat(item.welfarePrice);
+
+                    itemTable.innerHTML += `
+                        <tr class="border-b border-[#FDF8F5] hover:bg-[#FDF8F5] transition">
+                            <td class="py-4">
+                                <div class="flex items-center gap-3">
+                                    <img src="${item.imageUrl}" class="w-12 h-12 rounded-xl object-cover border">
+                                    <div>
+                                        <p class="font-bold">${item.name}</p>
+                                        <p class="text-[9px] ${saving < 0 ? 'text-red-500' : 'text-green-600'} font-bold uppercase">Saving: Rs. ${saving.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 font-black text-[#5D4037]">Rs. ${item.welfarePrice}</td>
+                            <td class="py-4 font-bold text-lg">${item.stock}</td>
+                            <td class="py-4">
+                                <button onclick="window.toggleStatus('${id}', '${item.status}')" 
+                                    class="flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-black uppercase transition
+                                    ${isOutOfStock ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
+                                    ${item.stock <= 0 ? 'Out of Stock' : item.status}
+                                </button>
+                            </td>
+                            <td class="py-4 text-right flex justify-end gap-2">
+                                <button onclick="window.openEditItemModal('${id}')" class="text-blue-400 hover:text-blue-600 transition p-2">
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="window.deleteItem('${id}')" class="text-red-400 hover:text-red-600 transition p-2">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+                lucide.createIcons();
+            });
+        }
+
+        // --- EDIT LOGIC (WINDOW SCOPE) ---
+        window.openEditItemModal = async (id) => {
+            const docSnap = await getDoc(doc(db, "items", id));
+            if (docSnap.exists()) {
+                const item = docSnap.data();
+                document.getElementById('editItemId').value = id;
+                document.getElementById('editItemName').value = item.name;
+                document.getElementById('editMrpPrice').value = item.mrpPrice;
+                document.getElementById('editWelfarePrice').value = item.welfarePrice;
+                document.getElementById('editItemStock').value = item.stock;
+                document.getElementById('editItemModal').classList.remove('hidden');
+                lucide.createIcons();
+            }
+        };
+
+        window.closeEditItemModal = () => {
+            document.getElementById('editItemModal').classList.add('hidden');
+        };
+
+        document.getElementById('saveItemEditBtn').addEventListener('click', async () => {
+            const id = document.getElementById('editItemId').value;
+            const btn = document.getElementById('saveItemEditBtn');
+            const updatedData = {
+                name: document.getElementById('editItemName').value,
+                mrpPrice: parseFloat(document.getElementById('editMrpPrice').value),
+                welfarePrice: parseFloat(document.getElementById('editWelfarePrice').value),
+                stock: parseInt(document.getElementById('editItemStock').value)
+            };
+
+            btn.disabled = true;
+            btn.innerText = "Updating...";
+
+            try {
+                await updateDoc(doc(db, "items", id), updatedData);
+                alert("Product Details Updated!");
+                window.closeEditItemModal();
+            } catch (e) { alert("Error: " + e.message); }
+            finally { btn.disabled = false; btn.innerText = "Update Inventory"; }
+        });
+
+        window.toggleStatus = async (id, currentStatus) => {
+            const newStatus = currentStatus === "In Stock" ? "Out of Stock" : "In Stock";
+            try { await updateDoc(doc(db, "items", id), { status: newStatus }); } catch (e) { alert(e.message); }
+        };
+
+        window.deleteItem = async (id) => { if(confirm("Sure?")) await deleteDoc(doc(db, "items", id)); };
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
+        lucide.createIcons();
+    </script>
+</body>
+</html>

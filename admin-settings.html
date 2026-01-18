@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - PMM Welfare Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#FDF8F5] text-[#3E2723] font-sans">
+
+    <div class="flex min-h-screen">
+        <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-[#5D4037] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
+            <div class="p-8">
+                <h1 class="text-2xl font-black italic flex items-center gap-2">
+                    <i data-lucide="box"></i> PMM Welfare.
+                </h1>
+            </div>
+           <nav class="mt-6 px-4 space-y-2">
+    <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
+        <i data-lucide="layout-dashboard"></i> Dashboard
+    </a>
+    
+    <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
+        <i data-lucide="clipboard-list"></i> Bin Card
+    </a>
+    
+    <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
+        <i data-lucide="package"></i> Store Items
+    </a>
+    
+    <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition">
+        <i data-lucide="shopping-bag"></i> Orders
+    </a>
+    
+    <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition group">
+        <i data-lucide="users"></i> Staff Members
+    </a>
+
+    <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-white/10 transition group">
+        <i data-lucide="settings"></i> System Settings
+    </a>
+
+    <div class="pt-20">
+        <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
+            <i data-lucide="log-out"></i> Logout
+        </button>
+    </div>
+</nav>
+        </aside>
+
+        <main class="flex-1 lg:ml-64 p-4 lg:p-10">
+            <header class="mb-10">
+                <h2 class="text-3xl font-black text-[#5D4037]">System Settings</h2>
+                <p class="text-[#8D6E63] font-medium italic">Customize your store identity and promotional banner</p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#F5EBE0]">
+                    <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#5D4037]">
+                        <i data-lucide="globe"></i> Site Identity
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Store Name</label>
+                            <input type="text" id="siteNameInput" placeholder="Ex: PMM Welfare Shop" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] font-bold">
+                        </div>
+                        <button id="saveSiteNameBtn" class="bg-[#5D4037] text-white px-8 py-4 rounded-2xl font-black hover:bg-[#3E2723] transition shadow-lg">Update Store Name</button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#F5EBE0]">
+                    <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#5D4037]">
+                        <i data-lucide="image"></i> Promo Banner Settings
+                    </h3>
+                    <div class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Banner Title</label>
+                                <input type="text" id="bannerTitleInput" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] font-bold">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Banner Subtitle</label>
+                                <input type="text" id="bannerSubInput" class="w-full p-4 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] focus:outline-none focus:ring-2 focus:ring-[#5D4037] font-bold">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Desktop Image (1200x400)</label>
+                                <input type="file" id="desktopImgInput" accept="image/*" class="w-full p-3 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] text-xs">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-[#8D6E63] uppercase ml-2">Mobile Image (600x800)</label>
+                                <input type="file" id="mobileImgInput" accept="image/*" class="w-full p-3 rounded-2xl bg-[#FDF8F5] border border-[#F5EBE0] text-xs">
+                            </div>
+                        </div>
+
+                        <button id="saveBannerBtn" class="w-full bg-[#5D4037] text-white p-5 rounded-2xl font-black hover:bg-[#3E2723] transition shadow-xl flex justify-center items-center gap-2">
+                            <span id="bannerBtnText">Update Promo Banner</span>
+                            <div id="bannerLoader" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB3jlpc_vbUydda2XpDj5Xd1J8kVei9v8U",
+            authDomain: "inventory-c3cca.firebaseapp.com",
+            projectId: "inventory-c3cca",
+            storageBucket: "inventory-c3cca.firebasestorage.app",
+            messagingSenderId: "396140403894",
+            appId: "1:396140403894:web:316617b8e390f8b0575a17"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Security Guard
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                loadCurrentSettings();
+            } else { window.location.href = "admin-login.html"; }
+        });
+
+        async function loadCurrentSettings() {
+            // Load Site Name
+            const siteSnap = await getDoc(doc(db, "settings", "site"));
+            if(siteSnap.exists()) document.getElementById('siteNameInput').value = siteSnap.data().name;
+
+            // Load Banner Data
+            const bannerSnap = await getDoc(doc(db, "settings", "banner"));
+            if(bannerSnap.exists()) {
+                const data = bannerSnap.data();
+                document.getElementById('bannerTitleInput').value = data.title;
+                document.getElementById('bannerSubInput').value = data.subtitle;
+            }
+        }
+
+        // Save Site Name Logic
+        document.getElementById('saveSiteNameBtn').addEventListener('click', async () => {
+            const newName = document.getElementById('siteNameInput').value;
+            try {
+                await setDoc(doc(db, "settings", "site"), { name: newName }, { merge: true });
+                alert("Site name updated successfully!");
+            } catch (e) { alert(e.message); }
+        });
+
+        // Save Banner Logic (With ImgBB Upload)
+        document.getElementById('saveBannerBtn').addEventListener('click', async () => {
+            const title = document.getElementById('bannerTitleInput').value;
+            const subtitle = document.getElementById('bannerSubInput').value;
+            const deskFile = document.getElementById('desktopImgInput').files[0];
+            const mobFile = document.getElementById('mobileImgInput').files[0];
+
+            const btnText = document.getElementById('bannerBtnText');
+            const loader = document.getElementById('bannerLoader');
+            btnText.innerText = "Uploading Images...";
+            loader.classList.remove('hidden');
+
+            try {
+                let deskUrl = "";
+                let mobUrl = "";
+
+                // Upload Desktop Image if selected
+                if(deskFile) {
+                    const fd = new FormData(); fd.append('image', deskFile);
+                    const res = await fetch('https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07', { method: 'POST', body: fd });
+                    const json = await res.json(); deskUrl = json.data.display_url;
+                }
+
+                // Upload Mobile Image if selected
+                if(mobFile) {
+                    const fd = new FormData(); fd.append('image', mobFile);
+                    const res = await fetch('https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07', { method: 'POST', body: fd });
+                    const json = await res.json(); mobUrl = json.data.display_url;
+                }
+
+                const updateData = { title, subtitle };
+                if(deskUrl) updateData.desktopUrl = deskUrl;
+                if(mobUrl) updateData.mobileUrl = mobUrl;
+
+                await setDoc(doc(db, "settings", "banner"), updateData, { merge: true });
+                alert("Banner updated successfully!");
+                location.reload();
+            } catch (e) { alert(e.message); }
+            finally { btnText.innerText = "Update Promo Banner"; loader.classList.add('hidden'); }
+        });
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>
