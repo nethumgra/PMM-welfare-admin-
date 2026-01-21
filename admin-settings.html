@@ -6,6 +6,11 @@
     <title>Settings - PMM Welfare Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F0FDF4; }
+        ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
+    </style>
 </head>
 <body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
 
@@ -20,27 +25,21 @@
                 <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="layout-dashboard"></i> Dashboard
                 </a>
-                
                 <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="clipboard-list"></i> Bin Card
                 </a>
-                
                 <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="package"></i> Store Items
                 </a>
-                
                 <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="shopping-bag"></i> Orders
                 </a>
-                
                 <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
                     <i data-lucide="users"></i> Staff Members
                 </a>
-
                 <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition group">
                     <i data-lucide="settings"></i> System Settings
                 </a>
-
                 <div class="pt-20">
                     <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
                         <i data-lucide="log-out"></i> Logout
@@ -50,66 +49,107 @@
         </aside>
 
         <main class="flex-1 lg:ml-64 p-4 lg:p-10">
-            <header class="mb-10">
-                <h2 class="text-3xl font-black text-[#064E3B]">System Settings</h2>
-                <p class="text-[#059669] font-medium italic">Customize your store identity and promotional banner</p>
+            <header class="mb-10 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black text-[#064E3B]">System Settings</h2>
+                    <p class="text-[#059669] font-medium italic">Store identity, banners and admin management</p>
+                </div>
             </header>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
                     <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#064E3B]">
-                        <i data-lucide="globe" class="text-[#059669]"></i> Site Identity
+                        <i data-lucide="globe" class="text-[#059669]"></i> Store Identity
                     </h3>
                     <div class="space-y-4">
+                        <div class="flex items-center gap-4 mb-4">
+                            <img id="logoPreview" src="" class="w-16 h-16 rounded-xl border object-contain bg-gray-50 p-2">
+                            <div class="flex-1">
+                                <label class="text-[10px] font-bold text-[#059669] uppercase tracking-widest block ml-2">Company Logo</label>
+                                <input type="file" id="logoInput" accept="image/*" class="text-xs w-full mt-1">
+                            </div>
+                        </div>
                         <div>
                             <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Store Name</label>
-                            <input type="text" id="siteNameInput" placeholder="Ex: PMM Welfare Shop" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
+                            <input type="text" id="siteNameInput" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                         </div>
-                        <button id="saveSiteNameBtn" class="bg-[#059669] text-white px-8 py-4 rounded-2xl font-black hover:bg-[#047857] transition shadow-lg shadow-emerald-100">Update Store Name</button>
+                        <button id="saveIdentityBtn" class="bg-[#059669] text-white px-8 py-4 rounded-2xl font-black hover:bg-[#047857] transition shadow-lg w-full">Update Identity</button>
                     </div>
                 </div>
 
                 <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
                     <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#064E3B]">
-                        <i data-lucide="image" class="text-[#059669]"></i> Promo Banner Settings
+                        <i data-lucide="map-pin" class="text-[#059669]"></i> Office Locations
                     </h3>
-                    <div class="space-y-5">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Banner Title</label>
-                                <input type="text" id="bannerTitleInput" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Banner Subtitle</label>
-                                <input type="text" id="bannerSubInput" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
-                            </div>
+                    <div class="space-y-4">
+                        <div class="flex gap-2">
+                            <input type="text" id="newLocInput" placeholder="Ex: Colombo Head Office" class="flex-1 p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                            <button id="addLocBtn" class="bg-[#059669] text-white px-6 rounded-2xl font-black hover:bg-[#047857]">Add</button>
                         </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Desktop Image (1200x400)</label>
-                                <input type="file" id="desktopImgInput" accept="image/*" class="w-full p-3 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#059669] file:text-white">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Mobile Image (600x800)</label>
-                                <input type="file" id="mobileImgInput" accept="image/*" class="w-full p-3 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#059669] file:text-white">
-                            </div>
-                        </div>
-
-                        <button id="saveBannerBtn" class="w-full bg-[#059669] text-white p-5 rounded-2xl font-black hover:bg-[#047857] transition shadow-xl shadow-emerald-100 flex justify-center items-center gap-2">
-                            <span id="bannerBtnText">Update Promo Banner</span>
-                            <div id="bannerLoader" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        </button>
+                        <div id="locList" class="flex flex-wrap gap-2 mt-4"></div>
                     </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-[#DCFCE7] lg:col-span-2">
+                    <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#064E3B]">
+                        <i data-lucide="image" class="text-[#059669]"></i> Role-Specific Banners
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Select Role</label>
+                            <select id="bannerRoleSelect" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold mb-4"></select>
+                            <p class="text-[10px] text-gray-400 italic">Select a role to set a custom banner for them.</p>
+                        </div>
+                        <div class="md:col-span-2 space-y-4 p-6 bg-[#F0FDF4] rounded-3xl border border-[#DCFCE7]">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="text" id="bannerTitle" placeholder="Banner Title" class="p-4 rounded-xl border border-[#DCFCE7] font-bold text-sm">
+                                <input type="text" id="bannerSub" placeholder="Banner Subtitle" class="p-4 rounded-xl border border-[#DCFCE7] font-bold text-sm">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-[9px] font-black uppercase ml-1">Desktop (1200x400)</label>
+                                    <input type="file" id="deskImg" class="w-full text-xs mt-1">
+                                </div>
+                                <div>
+                                    <label class="text-[9px] font-black uppercase ml-1">Mobile (600x800)</label>
+                                    <input type="file" id="mobImg" class="w-full text-xs mt-1">
+                                </div>
+                            </div>
+                            <button id="saveBannerBtn" class="w-full bg-[#059669] text-white p-4 rounded-2xl font-black shadow-lg flex justify-center items-center gap-2">
+                                <span id="bannerBtnText">Update Banner for Selected Role</span>
+                                <div id="bannerLoader" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="superAdminSection" class="hidden lg:col-span-2 bg-white p-8 rounded-[3rem] shadow-sm border-2 border-emerald-100">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-xl font-black text-[#064E3B] flex items-center gap-2">
+                            <i data-lucide="shield-check" class="text-emerald-600"></i> Admin User Management (Super Admin Only)
+                        </h3>
+                        <button onclick="toggleAdminForm()" class="bg-emerald-600 text-white px-6 py-2 rounded-full text-xs font-black">Add New Admin</button>
+                    </div>
+
+                    <div id="adminForm" class="hidden mb-10 p-8 bg-[#F0FDF4] rounded-[2.5rem] border border-[#DCFCE7]">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <input type="text" id="newAdminName" placeholder="Admin Full Name" class="p-4 rounded-2xl border border-[#DCFCE7] font-bold">
+                            <input type="email" id="newAdminEmail" placeholder="Admin Email" class="p-4 rounded-2xl border border-[#DCFCE7] font-bold">
+                            <input type="password" id="newAdminPass" placeholder="Temporary Password" class="p-4 rounded-2xl border border-[#DCFCE7] font-bold">
+                        </div>
+                        <button id="createAdminBtn" class="mt-4 bg-[#064E3B] text-white px-10 py-4 rounded-2xl font-black shadow-xl">Create Admin Account</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="adminList"></div>
                 </div>
             </div>
         </main>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, onSnapshot, addDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB3jlpc_vbUydda2XpDj5Xd1J8kVei9v8U",
@@ -123,77 +163,165 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        let isSuperAdmin = false;
 
-        // Security Guard
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                loadCurrentSettings();
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                const data = userDoc.data();
+                if(data.role === "admin") {
+                    // Check if it's the main creator (Super User) [cite: 39]
+                    if(data.isSuperAdmin || data.email === "admin@inventory.com") {
+                        isSuperAdmin = true;
+                        document.getElementById('superAdminSection').classList.remove('hidden');
+                        loadAdmins();
+                    }
+                    loadSettings();
+                } else { window.location.href = "admin-login.html"; }
             } else { window.location.href = "admin-login.html"; }
         });
 
-        async function loadCurrentSettings() {
-            // Load Site Name
+        // 1. Identity & Logo Upload 
+        async function loadSettings() {
             const siteSnap = await getDoc(doc(db, "settings", "site"));
-            if(siteSnap.exists()) document.getElementById('siteNameInput').value = siteSnap.data().name;
-
-            // Load Banner Data
-            const bannerSnap = await getDoc(doc(db, "settings", "banner"));
-            if(bannerSnap.exists()) {
-                const data = bannerSnap.data();
-                document.getElementById('bannerTitleInput').value = data.title;
-                document.getElementById('bannerSubInput').value = data.subtitle;
+            if(siteSnap.exists()) {
+                document.getElementById('siteNameInput').value = siteSnap.data().name;
+                document.getElementById('logoPreview').src = siteSnap.data().logoUrl || "";
             }
+
+            // Load roles for banner selection 
+            onSnapshot(collection(db, "roles"), (snap) => {
+                const select = document.getElementById('bannerRoleSelect');
+                select.innerHTML = '<option value="" disabled selected>Select Role</option>';
+                snap.forEach(d => select.innerHTML += `<option value="${d.data().name}">${d.data().name}</option>`);
+            });
+
+            // Load Locations 
+            onSnapshot(collection(db, "locations"), (snap) => {
+                const list = document.getElementById('locList');
+                list.innerHTML = '';
+                snap.forEach(d => {
+                    list.innerHTML += `<span class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-xs font-black flex items-center gap-2">${d.data().name} <button onclick="deleteLocation('${d.id}')" class="hover:text-red-500"><i data-lucide="x" class="w-3 h-3"></i></button></span>`;
+                });
+                lucide.createIcons();
+            });
         }
 
-        // Save Site Name Logic
-        document.getElementById('saveSiteNameBtn').addEventListener('click', async () => {
-            const newName = document.getElementById('siteNameInput').value;
-            try {
-                await setDoc(doc(db, "settings", "site"), { name: newName }, { merge: true });
-                alert("Site name updated successfully!");
-            } catch (e) { alert(e.message); }
+        document.getElementById('saveIdentityBtn').addEventListener('click', async () => {
+            const name = document.getElementById('siteNameInput').value;
+            const logoFile = document.getElementById('logoInput').files[0];
+            let logoUrl = document.getElementById('logoPreview').src;
+
+            if(logoFile) {
+                const fd = new FormData(); fd.append('image', logoFile);
+                const res = await fetch('https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07', { method: 'POST', body: fd });
+                const json = await res.json(); logoUrl = json.data.display_url;
+            }
+
+            await setDoc(doc(db, "settings", "site"), { name, logoUrl }, { merge: true });
+            alert("Identity Updated!");
+            location.reload();
         });
 
-        // Save Banner Logic (With ImgBB Upload)
-        document.getElementById('saveBannerBtn').addEventListener('click', async () => {
-            const title = document.getElementById('bannerTitleInput').value;
-            const subtitle = document.getElementById('bannerSubInput').value;
-            const deskFile = document.getElementById('desktopImgInput').files[0];
-            const mobFile = document.getElementById('mobileImgInput').files[0];
+        // 2. Locations 
+        document.getElementById('addLocBtn').addEventListener('click', async () => {
+            const name = document.getElementById('newLocInput').value;
+            if(!name) return;
+            await addDoc(collection(db, "locations"), { name });
+            document.getElementById('newLocInput').value = '';
+        });
 
-            const btnText = document.getElementById('bannerBtnText');
+        window.deleteLocation = async (id) => { if(confirm("Delete location?")) await deleteDoc(doc(db, "locations", id)); };
+
+        // 3. Role Based Banners 
+        document.getElementById('saveBannerBtn').addEventListener('click', async () => {
+            const role = document.getElementById('bannerRoleSelect').value;
+            if(!role) return alert("Select a role first!");
+            
+            const btn = document.getElementById('bannerBtnText');
             const loader = document.getElementById('bannerLoader');
-            btnText.innerText = "Uploading Images...";
-            loader.classList.remove('hidden');
+            btn.innerText = "Uploading..."; loader.classList.remove('hidden');
 
             try {
-                let deskUrl = "";
-                let mobUrl = "";
+                let deskUrl = "", mobUrl = "";
+                const deskF = document.getElementById('deskImg').files[0];
+                const mobF = document.getElementById('mobImg').files[0];
 
-                // Upload Desktop Image if selected
-                if(deskFile) {
-                    const fd = new FormData(); fd.append('image', deskFile);
+                if(deskF) {
+                    const fd = new FormData(); fd.append('image', deskF);
                     const res = await fetch('https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07', { method: 'POST', body: fd });
-                    const json = await res.json(); deskUrl = json.data.display_url;
+                    const j = await res.json(); deskUrl = j.data.display_url;
+                }
+                if(mobF) {
+                    const fd = new FormData(); fd.append('image', mobF);
+                    const res = await fetch('https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07', { method: 'POST', body: fd });
+                    const j = await res.json(); mobUrl = j.data.display_url;
                 }
 
-                // Upload Mobile Image if selected
-                if(mobFile) {
-                    const fd = new FormData(); fd.append('image', mobFile);
-                    const res = await fetch('https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07', { method: 'POST', body: fd });
-                    const json = await res.json(); mobUrl = json.data.display_url;
-                }
-
-                const updateData = { title, subtitle };
+                const updateData = {
+                    title: document.getElementById('bannerTitle').value,
+                    subtitle: document.getElementById('bannerSub').value,
+                    role: role
+                };
                 if(deskUrl) updateData.desktopUrl = deskUrl;
                 if(mobUrl) updateData.mobileUrl = mobUrl;
 
-                await setDoc(doc(db, "settings", "banner"), updateData, { merge: true });
-                alert("Banner updated successfully!");
-                location.reload();
+                await setDoc(doc(db, "settings", `banner_${role}`), updateData, { merge: true });
+                alert(`Banner updated for ${role}!`);
             } catch (e) { alert(e.message); }
-            finally { btnText.innerText = "Update Promo Banner"; loader.classList.add('hidden'); }
+            finally { btn.innerText = "Update Banner for Selected Role"; loader.classList.add('hidden'); }
         });
+
+        // 4. Admin Management [cite: 38, 39, 40]
+        window.toggleAdminForm = () => document.getElementById('adminForm').classList.toggle('hidden');
+
+        document.getElementById('createAdminBtn').addEventListener('click', async () => {
+            const name = document.getElementById('newAdminName').value;
+            const email = document.getElementById('newAdminEmail').value;
+            const pass = document.getElementById('newAdminPass').value;
+
+            const secondaryApp = initializeApp(firebaseConfig, "AdminCreator");
+            const secondaryAuth = getAuth(secondaryApp);
+
+            try {
+                const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
+                await setDoc(doc(db, "users", cred.user.uid), {
+                    name, email, role: "admin", isSuperAdmin: false, status: "Active", createdAt: new Date()
+                });
+                await signOut(secondaryAuth); await deleteApp(secondaryApp);
+                alert("Admin Account Created!"); toggleAdminForm();
+            } catch (e) { alert(e.message); }
+        });
+
+        function loadAdmins() {
+            onSnapshot(query(collection(db, "users"), where("role", "==", "admin")), (snap) => {
+                const list = document.getElementById('adminList');
+                list.innerHTML = '';
+                snap.forEach(d => {
+                    const adm = d.data();
+                    if(adm.email === auth.currentUser.email) return; // Don't show self
+                    
+                    list.innerHTML += `
+                        <div class="p-6 bg-[#F0FDF4] rounded-3xl border border-[#DCFCE7] shadow-sm">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="font-black text-sm text-[#064E3B]">${adm.name}</h4>
+                                    <p class="text-[10px] text-[#059669]">${adm.email}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${adm.status === 'Active' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">${adm.status}</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="updateAdminStatus('${d.id}', '${adm.status === 'Active' ? 'Inactive' : 'Active'}')" class="flex-1 bg-white text-[10px] font-black py-2 rounded-xl border border-emerald-100 hover:bg-emerald-50">${adm.status === 'Active' ? 'Deactivate' : 'Activate'}</button>
+                                <button onclick="deleteAdmin('${d.id}')" class="p-2 text-red-400 hover:bg-red-50 rounded-xl"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>`;
+                });
+                lucide.createIcons();
+            });
+        }
+
+        window.updateAdminStatus = async (uid, newStatus) => { await updateDoc(doc(db, "users", uid), { status: newStatus }); };
+        window.deleteAdmin = async (uid) => { if(confirm("Permanently remove this admin?")) await deleteDoc(doc(db, "users", uid)); };
 
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
         lucide.createIcons();

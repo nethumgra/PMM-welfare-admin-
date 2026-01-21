@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff & Roles - PMM Welfare Shop</title>
+    <title>Staff Management - PMM Welfare Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Custom scrollbar for better look */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
+        .modal-blur { backdrop-filter: blur(8px); }
     </style>
 </head>
 <body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
 
-    <div id="editModal" class="fixed inset-0 bg-[#064E3B]/60 hidden z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+    <div id="editModal" class="fixed inset-0 bg-[#064E3B]/60 hidden z-[60] flex items-center justify-center p-4 modal-blur">
         <div class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl border border-white/20">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-black italic text-[#064E3B]">Edit Staff Member</h3>
@@ -23,24 +23,80 @@
                     <i data-lucide="x-circle" class="w-8 h-8"></i>
                 </button>
             </div>
+            
             <input type="hidden" id="editUid">
-            <div class="space-y-4">
+            
+            <div class="space-y-4 max-h-[75vh] overflow-y-auto px-2">
+                <div class="flex flex-col items-center gap-3 p-4 bg-emerald-50 rounded-3xl border border-emerald-100">
+                    <img id="editImagePreview" src="" class="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-md">
+                    <div class="w-full">
+                        <label class="text-[9px] font-black text-[#059669] uppercase tracking-widest block mb-1 ml-2">Change Profile Image</label>
+                        <input type="file" id="editStaffImageInput" accept="image/*" class="text-[10px] w-full file:bg-emerald-600 file:text-white file:border-0 file:rounded-full file:px-3 file:py-1 cursor-pointer">
+                    </div>
+                </div>
+
                 <div>
                     <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Full Name</label>
-                    <input type="text" id="editName" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] text-[#064E3B] font-bold">
+                    <input type="text" id="editName" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm">
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Staff ID</label>
-                    <input type="text" id="editStaffId" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] text-[#064E3B] font-bold">
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">EPF Number</label>
+                        <input type="text" id="editEpf" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Status</label>
+                        <select id="editStatus" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Position / Role</label>
-                    <select id="editPosition" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
-                    </select>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Position</label>
+                        <select id="editPosition" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm"></select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Location (Unique)</label>
+                        <input type="text" id="editLocation" placeholder="Type Location" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm">
+                    </div>
                 </div>
-                <button id="saveEditBtn" class="w-full bg-[#059669] text-white p-5 rounded-3xl font-black hover:bg-[#047857] transition shadow-xl mt-4">
-                    Save Changes
+
+                <button id="saveEditBtn" class="w-full bg-[#059669] text-white p-5 rounded-3xl font-black hover:bg-[#047857] transition shadow-xl mt-4 flex justify-center items-center gap-2">
+                    <span id="editBtnText">Update Staff Details</span>
+                    <div id="editLoader" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="historyModal" class="fixed inset-0 bg-[#064E3B]/60 hidden z-[70] flex items-center justify-center p-4 modal-blur">
+        <div class="bg-white w-full max-w-2xl rounded-[3rem] p-8 shadow-2xl border border-white/20">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-xl font-black text-[#064E3B]" id="historyStaffName">Staff History</h3>
+                    <p class="text-[10px] text-[#059669] font-bold uppercase tracking-widest">Order Lifecycle & Status</p>
+                </div>
+                <button onclick="closeHistoryModal()" class="text-emerald-300 hover:text-red-500 transition">
+                    <i data-lucide="x-circle" class="w-8 h-8"></i>
+                </button>
+            </div>
+            <div class="overflow-y-auto max-h-[60vh]">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[#059669] text-[10px] uppercase tracking-widest border-b border-[#F0FDF4]">
+                            <th class="pb-4">Order ID</th>
+                            <th class="pb-4">Item</th>
+                            <th class="pb-4">Total</th>
+                            <th class="pb-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody" class="text-sm font-medium"></tbody>
+                </table>
+                <div id="noHistory" class="hidden text-center py-10 text-gray-400 font-bold italic">No orders found for this member.</div>
             </div>
         </div>
     </div>
@@ -48,41 +104,24 @@
     <div class="flex min-h-screen">
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#064E3B] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
             <div class="p-8 text-center border-b border-emerald-800/50">
-                <h1 class="text-2xl font-black italic flex items-center justify-center gap-2">
-                    <i data-lucide="box"></i> PMM Welfare.
-                </h1>
+                <h1 class="text-2xl font-black italic flex items-center justify-center gap-2"><i data-lucide="box"></i> PMM Welfare.</h1>
             </div>
-          <nav class="mt-6 px-4 space-y-2">
-            <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
-                <i data-lucide="layout-dashboard"></i> Dashboard
-            </a>
-            <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
-                <i data-lucide="clipboard-list"></i> Bin Card
-            </a>
-            <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
-                <i data-lucide="package"></i> Store Items
-            </a>
-            <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
-                <i data-lucide="shopping-bag"></i> Orders
-            </a>
-            <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition group">
-                <i data-lucide="users"></i> Staff Members
-            </a>
-            <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
-                <i data-lucide="settings"></i> System Settings
-            </a>
-
-            <div class="pt-20">
-                <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
-                    <i data-lucide="log-out"></i> Logout
-                </button>
-            </div>
-        </nav>
+            <nav class="mt-6 px-4 space-y-2">
+                <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="clipboard-list"></i> Bin Card</a>
+                <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="package"></i> Store Items</a>
+                <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="shopping-bag"></i> Orders</a>
+                <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition group"><i data-lucide="users"></i> Staff Members</a>
+                <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group"><i data-lucide="settings"></i> System Settings</a>
+                <div class="pt-20">
+                    <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100"><i data-lucide="log-out"></i> Logout</button>
+                </div>
+            </nav>
         </aside>
 
         <main class="flex-1 lg:ml-64 p-4 lg:p-10">
             <header class="flex justify-between items-center mb-10">
-                <h2 class="text-3xl font-black text-[#064E3B]">Staff & Role Management</h2>
+                <h2 class="text-3xl font-black text-[#064E3B]">Staff & Directory</h2>
                 <div class="text-right bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#DCFCE7]">
                     <p class="font-black text-[#064E3B]" id="adminNameDisplay">Admin</p>
                     <p class="text-[10px] uppercase tracking-widest text-[#059669] font-bold">Main Admin</p>
@@ -90,47 +129,46 @@
             </header>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1">
+                <div class="lg:col-span-1 space-y-6">
                     <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
-                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#064E3B]">
-                            <i data-lucide="shield-plus" class="text-[#059669]"></i> Create New Role
-                        </h3>
+                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#064E3B]"><i data-lucide="shield-plus" class="text-[#059669]"></i> Create Role</h3>
                         <div class="space-y-4">
-                            <div>
-                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-wide">Role Name</label>
-                                <input type="text" id="newRoleName" placeholder="Ex: Manager" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] text-[#064E3B] font-bold">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-wide">Monthly Spend Limit (Rs.)</label>
-                                <input type="number" id="newRoleLimit" placeholder="Ex: 15000" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-black text-[#064E3B]">
-                            </div>
-                            <button id="addRoleBtn" class="w-full bg-[#059669] text-white px-6 py-4 rounded-2xl font-black hover:bg-[#047857] transition shadow-lg shadow-emerald-100">Create Role</button>
+                            <input type="text" id="newRoleName" placeholder="Ex: Manager" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                            <input type="number" id="newRoleLimit" placeholder="Spend Limit (Rs.)" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-black">
+                            <button id="addRoleBtn" class="w-full bg-[#059669] text-white p-4 rounded-2xl font-black hover:bg-[#047857] transition shadow-lg">Create Role</button>
                         </div>
-                        
-                        <div class="mt-8 border-t border-[#F0FDF4] pt-6">
-                            <h4 class="text-[10px] font-black text-[#059669] uppercase mb-4 tracking-widest">Existing Roles & Limits</h4>
-                            <div id="rolesList" class="space-y-3">
-                                </div>
-                        </div>
+                        <div id="rolesList" class="mt-6 space-y-2"></div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-2">
-                    <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
-                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#064E3B]">
-                            <i data-lucide="user-plus" class="text-[#059669]"></i> Register Staff Member
-                        </h3>
+                    <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-[#DCFCE7]">
+                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#064E3B]"><i data-lucide="user-plus" class="text-[#059669]"></i> Register Staff Member</h3>
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="text" id="staffName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
-                                <input type="text" id="assignStaffId" placeholder="Staff ID (Ex: STF-001)" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
+                                <input type="text" id="staffName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                                <input type="text" id="staffEpf" placeholder="EPF Number" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <select id="staffPosition" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]"></select>
-                                <input type="email" id="staffEmail" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
+                                <select id="staffPosition" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold"></select>
+                                <input type="text" id="staffLocation" placeholder="Location (Ex: Plant A)" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                             </div>
-                            <input type="password" id="staffPassword" placeholder="Temp Password" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold text-[#064E3B]">
-                            <button id="regStaffBtn" class="w-full bg-[#059669] text-white p-5 rounded-2xl font-black hover:bg-[#047857] transition shadow-xl shadow-emerald-100">Register Staff Member</button>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="text" id="staffWhatsapp" placeholder="WhatsApp Number" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                                <input type="text" id="staffContact" placeholder="Contact Number" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="email" id="staffEmail" placeholder="Email (Optional)" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                                <input type="password" id="staffPassword" placeholder="Temp Password" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Profile Image</label>
+                                <input type="file" id="staffImage" accept="image/*" class="w-full p-3 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] text-xs">
+                            </div>
+                            <button id="regStaffBtn" class="w-full bg-[#059669] text-white p-5 rounded-2xl font-black hover:bg-[#047857] transition shadow-xl flex justify-center items-center gap-2">
+                                <span id="regBtnText">Register Staff Member</span>
+                                <div id="regLoader" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -138,8 +176,7 @@
                 <div class="lg:col-span-3">
                     <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-[#DCFCE7]">
                         <h3 class="text-xl font-black text-[#064E3B] mb-6">Staff Directory</h3>
-                        <div id="staffListDirectory" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            </div>
+                        <div id="staffListDirectory" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
                     </div>
                 </div>
             </div>
@@ -149,7 +186,7 @@
     <script type="module">
         import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, deleteDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, deleteDoc, updateDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB3jlpc_vbUydda2XpDj5Xd1J8kVei9v8U",
@@ -157,15 +194,13 @@
             projectId: "inventory-c3cca",
             storageBucket: "inventory-c3cca.firebasestorage.app",
             messagingSenderId: "396140403894",
-            appId: "1:396140403894:web:316617b8e390f8b0575a17",
-            measurementId: "G-YK5X3Z6HER"
+            appId: "1:396140403894:web:316617b8e390f8b0575a17"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Admin Auth Guard
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -175,140 +210,154 @@
             } else { window.location.href = "admin-login.html"; }
         });
 
-        // Add Role
+        // Roles Sync
+        onSnapshot(collection(db, "roles"), (snap) => {
+            const list = document.getElementById('rolesList');
+            const selects = [document.getElementById('staffPosition'), document.getElementById('editPosition')];
+            list.innerHTML = '';
+            selects.forEach(s => s.innerHTML = '<option value="" disabled selected>Choose Role</option>');
+            
+            snap.forEach(d => {
+                const role = d.data();
+                list.innerHTML += `<div class="p-3 bg-[#F0FDF4] rounded-xl border border-[#DCFCE7] flex justify-between items-center"><span class="text-xs font-bold">${role.name}</span><button onclick="deleteRole('${d.id}')" class="text-red-300 hover:text-red-500"><i data-lucide="trash-2" class="w-3 h-3"></i></button></div>`;
+                selects.forEach(s => s.innerHTML += `<option value="${role.name}">${role.name}</option>`);
+            });
+            lucide.createIcons();
+        });
+
+        // Register Staff
+        document.getElementById('regStaffBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('regBtnText');
+            const loader = document.getElementById('regLoader');
+            const name = document.getElementById('staffName').value;
+            const epf = document.getElementById('staffEpf').value;
+            const email = document.getElementById('staffEmail').value || `${epf}@pmm.com`;
+            const imgFile = document.getElementById('staffImage').files[0];
+
+            if(!name || !epf) return alert("Fill mandatory fields!");
+            btn.innerText = "Processing..."; loader.classList.remove('hidden');
+
+            try {
+                let imageUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                if(imgFile) {
+                    const fd = new FormData(); fd.append('image', imgFile);
+                    const res = await fetch('https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07', { method: 'POST', body: fd });
+                    const json = await res.json(); imageUrl = json.data.display_url;
+                }
+
+                const secondaryApp = initializeApp(firebaseConfig, "StaffRegApp");
+                const secondaryAuth = getAuth(secondaryApp);
+                const cred = await createUserWithEmailAndPassword(secondaryAuth, email, document.getElementById('staffPassword').value);
+
+                await setDoc(doc(db, "users", cred.user.uid), {
+                    name, epfNumber: epf, email, imageUrl,
+                    position: document.getElementById('staffPosition').value,
+                    location: document.getElementById('staffLocation').value,
+                    whatsapp: document.getElementById('staffWhatsapp').value,
+                    contact: document.getElementById('staffContact').value,
+                    role: "staff", status: "Active", createdAt: new Date()
+                });
+
+                await signOut(secondaryAuth); await deleteApp(secondaryApp);
+                alert("Staff Registered!"); location.reload();
+            } catch (e) { alert(e.message); btn.innerText = "Register Staff Member"; loader.classList.add('hidden'); }
+        });
+
+        // Directory
+        onSnapshot(query(collection(db, "users"), where("role", "==", "staff")), (snap) => {
+            const dir = document.getElementById('staffListDirectory');
+            dir.innerHTML = '';
+            snap.forEach(d => {
+                const staff = d.data();
+                dir.innerHTML += `
+                    <div class="p-6 bg-white rounded-[2rem] border border-[#DCFCE7] shadow-sm relative group hover:shadow-xl transition-all">
+                        <div class="flex flex-col items-center text-center">
+                            <img src="${staff.imageUrl}" class="w-16 h-16 rounded-2xl object-cover mb-4 border-4 border-[#F0FDF4]">
+                            <h4 onclick="viewHistory('${d.id}', '${staff.name}')" class="font-black text-sm text-[#064E3B] cursor-pointer hover:underline">${staff.name}</h4>
+                            <p class="text-[9px] font-black uppercase text-[#059669] opacity-70">${staff.position} | ${staff.location}</p>
+                            <span class="text-[8px] font-bold mt-2 px-2 py-0.5 rounded-full ${staff.status === 'Active' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">${staff.status}</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-[#F0FDF4] flex justify-between items-center">
+                            <p class="text-[9px] font-bold uppercase">EPF: ${staff.epfNumber}</p>
+                            <button onclick="openEditModal('${d.id}')" class="text-emerald-300 hover:text-[#064E3B]"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>`;
+            });
+            lucide.createIcons();
+        });
+
+        // History
+        window.viewHistory = (uid, name) => {
+            document.getElementById('historyStaffName').innerText = name + "'s History";
+            const table = document.getElementById('historyTableBody');
+            const noHist = document.getElementById('noHistory');
+            table.innerHTML = ''; noHist.classList.add('hidden');
+
+            const q = query(collection(db, "orders"), where("userId", "==", uid), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snap) => {
+                if(snap.empty) noHist.classList.remove('hidden');
+                snap.forEach(d => {
+                    const order = d.data();
+                    table.innerHTML += `<tr class="border-b border-emerald-50"><td class="py-3 font-black text-[#059669]">#${d.id.slice(0,8)}</td><td class="py-3 font-bold">${order.itemName}</td><td class="py-3">Rs. ${order.total.toLocaleString()}</td><td class="py-3"><span class="px-2 py-0.5 rounded-full text-[8px] font-black bg-emerald-50">${order.status}</span></td></tr>`;
+                });
+                document.getElementById('historyModal').classList.remove('hidden');
+            });
+        };
+
+        // Open Edit Modal (Updated)
+        window.openEditModal = async (uid) => {
+            const d = await getDoc(doc(db, "users", uid));
+            const s = d.data();
+            document.getElementById('editUid').value = uid;
+            document.getElementById('editName').value = s.name;
+            document.getElementById('editEpf').value = s.epfNumber;
+            document.getElementById('editStatus').value = s.status || "Active";
+            document.getElementById('editPosition').value = s.position;
+            document.getElementById('editLocation').value = s.location || ""; // Type-in Location
+            document.getElementById('editImagePreview').src = s.imageUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+            
+            document.getElementById('editModal').classList.remove('hidden');
+        };
+
+        // Save Edit (Updated with Image Upload)
+        document.getElementById('saveEditBtn').addEventListener('click', async () => {
+            const uid = document.getElementById('editUid').value;
+            const newImgFile = document.getElementById('editStaffImageInput').files[0];
+            const btn = document.getElementById('editBtnText');
+            const loader = document.getElementById('editLoader');
+
+            btn.innerText = "Updating..."; loader.classList.remove('hidden');
+
+            try {
+                let updatedData = {
+                    name: document.getElementById('editName').value,
+                    epfNumber: document.getElementById('editEpf').value,
+                    status: document.getElementById('editStatus').value,
+                    position: document.getElementById('editPosition').value,
+                    location: document.getElementById('editLocation').value // Unique string location
+                };
+
+                if(newImgFile) {
+                    const fd = new FormData(); fd.append('image', newImgFile);
+                    const res = await fetch('https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07', { method: 'POST', body: fd });
+                    const json = await res.json();
+                    updatedData.imageUrl = json.data.display_url;
+                }
+
+                await updateDoc(doc(db, "users", uid), updatedData);
+                alert("Staff Updated!"); location.reload();
+            } catch (e) { alert(e.message); btn.innerText = "Update Staff Details"; loader.classList.add('hidden'); }
+        });
+
+        window.closeEditModal = () => document.getElementById('editModal').classList.add('hidden');
+        window.closeHistoryModal = () => document.getElementById('historyModal').classList.add('hidden');
+        window.deleteRole = async (id) => { if(confirm("Delete role?")) await deleteDoc(doc(db, "roles", id)); };
         document.getElementById('addRoleBtn').addEventListener('click', async () => {
             const name = document.getElementById('newRoleName').value;
             const limit = document.getElementById('newRoleLimit').value;
-
-            if(!name || !limit) { alert("Please enter both Role Name and Limit!"); return; }
-
-            try {
-                await addDoc(collection(db, "roles"), {
-                    name: name,
-                    monthlyLimit: parseFloat(limit),
-                    createdAt: new Date()
-                });
-                document.getElementById('newRoleName').value = '';
-                document.getElementById('newRoleLimit').value = '';
-                alert("Role created successfully!");
-            } catch (e) { alert(e.message); }
-        });
-
-        // Sync Roles List
-        onSnapshot(collection(db, "roles"), (snap) => {
-            const list = document.getElementById('rolesList');
-            const select = document.getElementById('staffPosition');
-            const editSelect = document.getElementById('editPosition');
-            
-            list.innerHTML = '';
-            const options = '<option value="" disabled selected>Choose Role</option>';
-            select.innerHTML = options;
-            editSelect.innerHTML = options;
-
-            snap.forEach(d => {
-                const role = d.data();
-                list.innerHTML += `
-                    <div class="flex flex-col p-4 bg-[#F0FDF4] rounded-2xl border border-[#DCFCE7] group hover:border-[#059669] transition-all">
-                        <div class="flex justify-between items-center">
-                            <span class="font-black text-sm text-[#064E3B]">${role.name}</span>
-                            <button onclick="deleteRole('${d.id}')" class="text-emerald-300 hover:text-red-500 transition">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                        <div class="flex items-center gap-1 mt-1">
-                            <span class="text-[9px] font-bold text-[#059669] uppercase">Limit:</span>
-                            <span class="text-[10px] font-black text-emerald-600">Rs. ${role.monthlyLimit.toLocaleString()}</span>
-                        </div>
-                    </div>`;
-                
-                const opt = `<option value="${role.name}">${role.name}</option>`;
-                select.innerHTML += opt;
-                editSelect.innerHTML += opt;
-            });
-            lucide.createIcons();
-        });
-
-        // Registration Logic
-        document.getElementById('regStaffBtn').addEventListener('click', async () => {
-            const name = document.getElementById('staffName').value;
-            const staffId = document.getElementById('assignStaffId').value;
-            const position = document.getElementById('staffPosition').value;
-            const email = document.getElementById('staffEmail').value;
-            const password = document.getElementById('staffPassword').value;
-
-            if(!name || !staffId || !position || !email || !password) {
-                alert("Fill all fields!"); return;
-            }
-
-            const secondaryApp = initializeApp(firebaseConfig, "SecondaryRegistration");
-            const secondaryAuth = getAuth(secondaryApp);
-
-            try {
-                const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
-                await setDoc(doc(db, "users", cred.user.uid), {
-                    name, email, role: "staff", staffId, position, createdAt: new Date()
-                });
-                await signOut(secondaryAuth);
-                await deleteApp(secondaryApp);
-                alert("Success: " + name + " registered!");
-                ["staffName", "assignStaffId", "staffEmail", "staffPassword"].forEach(id => document.getElementById(id).value = '');
-            } catch (e) { 
-                alert(e.message); 
-                await deleteApp(secondaryApp); 
-            }
-        });
-
-        // Directory Update
-        onSnapshot(query(collection(db, "users"), where("role", "==", "staff")), (snap) => {
-            const directory = document.getElementById('staffListDirectory');
-            directory.innerHTML = '';
-            snap.forEach(d => {
-                const staff = d.data();
-                directory.innerHTML += `
-                    <div class="p-6 bg-[#F0FDF4] rounded-[2rem] border border-[#DCFCE7] shadow-sm relative group hover:border-[#059669] transition-all">
-                        <button onclick="openEditModal('${d.id}')" class="absolute top-4 right-4 text-emerald-300 hover:text-[#064E3B]"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="bg-[#059669] text-white p-3 rounded-2xl shadow-lg"><i data-lucide="user"></i></div>
-                            <div>
-                                <h4 class="font-black text-sm text-[#064E3B]">${staff.name}</h4>
-                                <span class="text-[9px] bg-emerald-100 text-[#059669] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">${staff.position}</span>
-                            </div>
-                        </div>
-                        <p class="text-[11px] font-black text-[#059669]">ID: ${staff.staffId}</p>
-                        <p class="text-[11px] text-[#059669] truncate mt-1 opacity-70">${staff.email}</p>
-                    </div>`;
-            });
-            lucide.createIcons();
-        });
-
-        window.deleteRole = async (id) => { if(confirm("Delete this role?")) await deleteDoc(doc(db, "roles", id)); };
-        
-        window.openEditModal = async (uid) => {
-            const userDoc = await getDoc(doc(db, "users", uid));
-            if (userDoc.exists()) {
-                const data = userDoc.data();
-                document.getElementById('editUid').value = uid;
-                document.getElementById('editName').value = data.name;
-                document.getElementById('editStaffId').value = data.staffId;
-                document.getElementById('editPosition').value = data.position;
-                document.getElementById('editModal').classList.remove('hidden');
-                lucide.createIcons();
-            }
-        };
-
-        window.closeEditModal = () => document.getElementById('editModal').classList.add('hidden');
-
-        document.getElementById('saveEditBtn').addEventListener('click', async () => {
-            const uid = document.getElementById('editUid').value;
-            const updatedData = {
-                name: document.getElementById('editName').value,
-                staffId: document.getElementById('editStaffId').value,
-                position: document.getElementById('editPosition').value
-            };
-            try {
-                await updateDoc(doc(db, "users", uid), updatedData);
-                alert("Updated!"); closeEditModal();
-            } catch (e) { alert(e.message); }
+            if(!name || !limit) return;
+            await addDoc(collection(db, "roles"), { name, monthlyLimit: parseFloat(limit) });
+            document.getElementById('newRoleName').value = ''; document.getElementById('newRoleLimit').value = '';
         });
 
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
