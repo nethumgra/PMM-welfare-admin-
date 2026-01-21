@@ -8,10 +8,11 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        /* Custom scrollbar for table */
+        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
+        .tab-active { background-color: #059669; color: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
     </style>
 </head>
 <body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
@@ -27,27 +28,21 @@
                 <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="layout-dashboard"></i> Dashboard
                 </a>
-                
                 <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="clipboard-list"></i> Bin Card
                 </a>
-                
                 <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="package"></i> Store Items
                 </a>
-                
                 <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition">
                     <i data-lucide="shopping-bag"></i> Orders
                 </a>
-                
                 <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
                     <i data-lucide="users"></i> Staff Members
                 </a>
-
                 <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
                     <i data-lucide="settings"></i> System Settings
                 </a>
-
                 <div class="pt-20">
                     <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
                         <i data-lucide="log-out"></i> Logout
@@ -85,13 +80,11 @@
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-6 mb-8 items-end">
-                <div class="bg-white p-2 rounded-[2rem] shadow-sm border border-[#DCFCE7] flex gap-1 overflow-x-auto">
-                    <button onclick="setStatusFilter('all')" id="tab-all" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition bg-[#059669] text-white shadow-lg">All</button>
-                    <button onclick="setStatusFilter('Pending')" id="tab-Pending" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Pending</button>
-                    <button onclick="setStatusFilter('Dispatched')" id="tab-Dispatched" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Dispatched</button>
-                    <button onclick="setStatusFilter('Completed')" id="tab-Completed" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Completed</button>
-                </div>
+            <div class="bg-white p-2 rounded-[2rem] shadow-sm border border-[#DCFCE7] flex gap-1 mb-8 overflow-x-auto w-fit">
+                <button onclick="setStatusFilter('all')" id="tab-all" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition tab-active">All Orders</button>
+                <button onclick="setStatusFilter('Pending')" id="tab-Pending" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Pending</button>
+                <button onclick="setStatusFilter('Dispatched')" id="tab-Dispatched" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Dispatched</button>
+                <button onclick="setStatusFilter('Completed')" id="tab-Completed" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Completed</button>
             </div>
 
             <div class="bg-white rounded-[3rem] shadow-sm border border-[#DCFCE7] overflow-hidden">
@@ -99,7 +92,7 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-[#F0FDF4] text-[#059669] text-[10px] uppercase tracking-widest border-b border-[#DCFCE7]">
-                                <th class="p-6">Order Details</th>
+                                <th class="p-6">Order No & Item</th>
                                 <th class="p-6">Staff Member</th>
                                 <th class="p-6 text-center">Status</th>
                                 <th class="p-6">Financials</th>
@@ -107,7 +100,7 @@
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody" class="text-sm font-medium text-[#064E3B]">
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
@@ -125,8 +118,7 @@
             projectId: "inventory-c3cca",
             storageBucket: "inventory-c3cca.firebasestorage.app",
             messagingSenderId: "396140403894",
-            appId: "1:396140403894:web:316617b8e390f8b0575a17",
-            measurementId: "G-YK5X3Z6HER"
+            appId: "1:396140403894:web:316617b8e390f8b0575a17"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -136,6 +128,7 @@
         let currentStatusFilter = 'all';
         let unsubscribeOrders = null;
 
+        // Auth Protection & Init
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -146,86 +139,95 @@
             } else { window.location.href = "admin-login.html"; }
         });
 
-window.loadOrders = () => {
-    const tableBody = document.getElementById('ordersTableBody');
-    if (unsubscribeOrders) unsubscribeOrders();
+        // Load and Listen to Orders
+        window.loadOrders = () => {
+            const tableBody = document.getElementById('ordersTableBody');
+            if (unsubscribeOrders) unsubscribeOrders();
 
-    const constraints = [];
-    if (currentStatusFilter !== 'all') constraints.push(where("status", "==", currentStatusFilter));
+            const constraints = [];
+            if (currentStatusFilter !== 'all') constraints.push(where("status", "==", currentStatusFilter));
 
-    const q = query(collection(db, "orders"), ...constraints, orderBy("createdAt", "desc"));
+            const q = query(collection(db, "orders"), ...constraints, orderBy("createdAt", "desc"));
 
-    unsubscribeOrders = onSnapshot(q, (snap) => {
-        tableBody.innerHTML = '';
-        let totalRev = 0;
-        let totalSave = 0;
-        
-        snap.forEach(d => {
-            const order = d.data();
-            const id = d.id;
-            const status = order.status || "Pending";
-            
-            if(status !== "Cancelled") {
-                totalRev += order.total || 0;
-                totalSave += order.savings || 0;
-            }
+            unsubscribeOrders = onSnapshot(q, (snap) => {
+                tableBody.innerHTML = '';
+                let totalRev = 0;
+                let totalSave = 0;
+                
+                snap.forEach(d => {
+                    const order = d.data();
+                    const id = d.id;
+                    const status = order.status || "Pending";
+                    const orderDate = order.createdAt?.toDate().toLocaleDateString() || 'Today';
+                    
+                    if(status !== "Cancelled") {
+                        totalRev += order.total || 0;
+                        totalSave += order.savings || 0;
+                    }
 
-            let statusBadge = "";
-            let actionBtn = "";
+                    // Dynamic Status Badges
+                    let statusBadgeClass = "bg-amber-100 text-amber-600";
+                    if (status === "Dispatched") statusBadgeClass = "bg-blue-100 text-blue-600";
+                    if (status === "Completed") statusBadgeClass = "bg-emerald-100 text-emerald-600";
+                    if (status === "Cancelled") statusBadgeClass = "bg-red-100 text-red-600";
 
-            if (status === "Pending") {
-                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-amber-100 text-amber-600 uppercase tracking-widest">Pending</span>`;
-                actionBtn = `
-                    <div class="flex gap-2 justify-end">
-                        <button onclick="updateOrderStatus('${id}', 'Dispatched')" class="bg-white border-2 border-blue-600 text-blue-600 p-2 px-4 rounded-xl hover:bg-blue-600 hover:text-white transition duration-300 flex items-center gap-2 text-[10px] font-black uppercase">
-                            Dispatch <i data-lucide="truck" class="w-3 h-3"></i>
-                        </button>
-                        <button onclick="updateOrderStatus('${id}', 'Completed')" class="bg-white border-2 border-emerald-600 text-emerald-600 p-2 px-4 rounded-xl hover:bg-emerald-600 hover:text-white transition duration-300 flex items-center gap-2 text-[10px] font-black uppercase">
-                            Complete <i data-lucide="check" class="w-3 h-3"></i>
-                        </button>
-                    </div>`;
-            } else if (status === "Dispatched") {
-                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-blue-100 text-blue-600 uppercase tracking-widest">Dispatched</span>`;
-                actionBtn = `<button onclick="updateOrderStatus('${id}', 'Completed')" class="bg-white border-2 border-emerald-600 text-emerald-600 p-2 px-4 rounded-xl hover:bg-emerald-600 hover:text-white transition duration-300 flex items-center gap-2 text-[10px] font-black uppercase">Complete <i data-lucide="check" class="w-3 h-3"></i></button>`;
-            } else if (status === "Cancelled") {
-                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-red-100 text-red-600 uppercase tracking-widest">Cancelled</span>`;
-                actionBtn = `<div class="text-red-300 p-2"><i data-lucide="x-circle" class="w-5 h-5"></i></div>`;
-            } else {
-                statusBadge = `<span class="px-3 py-1.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-600 uppercase tracking-widest flex items-center justify-center gap-1 mx-auto w-fit"><i data-lucide="shield-check" class="w-3 h-3"></i> Completed</span>`;
-                actionBtn = `<div class="bg-emerald-600 text-white p-2 rounded-full"><i data-lucide="check-check" class="w-4 h-4"></i></div>`;
-            }
+                    // Contextual Action Buttons
+                    let actionButtons = "";
+                    if (status === "Pending") {
+                        actionButtons = `
+                            <button onclick="updateOrderStatus('${id}', 'Dispatched')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg" title="Dispatch">
+                                <i data-lucide="truck" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="updateOrderStatus('${id}', 'Completed')" class="text-emerald-600 hover:bg-emerald-50 p-2 rounded-lg" title="Complete">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            </button>`;
+                    } else if (status === "Dispatched") {
+                        actionButtons = `
+                            <button onclick="updateOrderStatus('${id}', 'Completed')" class="text-emerald-600 hover:bg-emerald-50 p-2 rounded-lg" title="Complete">
+                                <i data-lucide="check-circle" class="w-5 h-5"></i>
+                            </button>`;
+                    } else {
+                        actionButtons = `<span class="text-emerald-500"><i data-lucide="check-check" class="w-5 h-5"></i></span>`;
+                    }
 
-            tableBody.innerHTML += `
-                <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4] transition">
-                    <td class="p-6">
-                        <p class="font-black text-[#064E3B]">${order.itemName}</p>
-                        <p class="text-[10px] text-[#059669] font-bold uppercase">Qty: ${order.qty} | #${id.substring(0,8)}</p>
-                    </td>
-                    <td class="p-6">
-                        <p class="font-bold text-sm text-[#064E3B]">${order.staffName}</p>
-                        <p class="text-[10px] text-[#059669] uppercase tracking-tighter italic">${order.userPosition}</p>
-                    </td>
-                    <td class="p-6 text-center">${statusBadge}</td>
-                    <td class="p-6">
-                        <p class="font-black text-[#064E3B]">Rs. ${order.total.toLocaleString()}</p>
-                        <p class="text-[9px] text-emerald-600 font-bold uppercase tracking-tight">Saving: Rs. ${order.savings.toLocaleString()}</p>
-                    </td>
-                    <td class="p-6 text-right">
-                        <div class="flex justify-end items-center gap-3">
-                            ${actionBtn}
-                            <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2 rounded-xl hover:bg-[#064E3B] transition shadow-md"><i data-lucide="download" class="w-4 h-4"></i></button>
-                        </div>
-                    </td>
-                </tr>`;
-        });
-        document.getElementById('totalRevenueDisplay').innerText = `Rs. ${totalRev.toLocaleString()}`;
-        document.getElementById('totalSavingsDisplay').innerText = `Rs. ${totalSave.toLocaleString()}`;
-        lucide.createIcons();
-    });
-};
+                    tableBody.innerHTML += `
+                        <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4] transition">
+                            <td class="p-6">
+                                <p class="font-black text-[#064E3B]">#${id.substring(0,8).toUpperCase()}</p>
+                                <p class="font-bold text-[#059669] text-xs">${order.itemName}</p>
+                                <p class="text-[9px] text-gray-400 uppercase">${orderDate}</p>
+                            </td>
+                            <td class="p-6">
+                                <p class="font-bold text-sm text-[#064E3B]">${order.staffName}</p>
+                                <p class="text-[10px] text-[#059669] uppercase tracking-tighter italic">${order.userPosition}</p>
+                            </td>
+                            <td class="p-6 text-center">
+                                <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${statusBadgeClass}">${status}</span>
+                            </td>
+                            <td class="p-6">
+                                <p class="font-black text-[#064E3B]">Rs. ${order.total.toLocaleString()}</p>
+                                <p class="text-[9px] text-emerald-600 font-bold uppercase">Saving: Rs. ${order.savings.toLocaleString()}</p>
+                            </td>
+                            <td class="p-6 text-right">
+                                <div class="flex justify-end items-center gap-2">
+                                    ${actionButtons}
+                                    <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2 rounded-xl hover:bg-[#064E3B] transition">
+                                        <i data-lucide="download" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
 
+                document.getElementById('totalRevenueDisplay').innerText = `Rs. ${totalRev.toLocaleString()}`;
+                document.getElementById('totalSavingsDisplay').innerText = `Rs. ${totalSave.toLocaleString()}`;
+                lucide.createIcons();
+            });
+        };
+
+        // Update Logic
         window.updateOrderStatus = async (id, newStatus) => {
-            if(!confirm(`Move order to ${newStatus}?`)) return;
+            if(!confirm(`Update order status to ${newStatus}?`)) return;
             try {
                 const orderRef = doc(db, "orders", id);
                 const updateData = { status: newStatus };
@@ -236,28 +238,34 @@ window.loadOrders = () => {
             } catch (e) { alert("Error: " + e.message); }
         };
 
+        // UI Filtering
         window.setStatusFilter = (status) => {
             currentStatusFilter = status;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]";
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-[#059669]', 'hover:bg-[#F0FDF4]');
             });
-            document.getElementById('tab-' + status).className = "tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition bg-[#059669] text-white shadow-lg";
+            const activeTab = document.getElementById('tab-' + status);
+            activeTab.classList.add('tab-active');
+            activeTab.classList.remove('text-[#059669]', 'hover:bg-[#F0FDF4]');
             loadOrders();
         };
 
+        // PDF Generation
         window.downloadAdminInvoice = async (orderId) => {
             const docSnap = await getDoc(doc(db, "orders", orderId));
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
+                
                 pdf.setFont("helvetica", "bold");
-                pdf.setTextColor(5, 150, 105); // Emerald Green
+                pdf.setTextColor(5, 150, 105); 
                 pdf.text("PMM WELFARE RECEIPT", 50, 15, { align: "center" });
                 
                 pdf.setTextColor(0, 0, 0);
                 pdf.setFontSize(10);
-                pdf.text(`Order ID: #${orderId.substring(0,8)}`, 10, 30);
+                pdf.text(`Order ID: #${orderId.substring(0,8).toUpperCase()}`, 10, 30);
                 pdf.text(`Status: ${data.status.toUpperCase()}`, 10, 35);
                 pdf.text(`Date: ${data.createdAt?.toDate().toLocaleDateString()}`, 10, 40);
                 
@@ -277,11 +285,14 @@ window.loadOrders = () => {
                 pdf.setTextColor(5, 150, 105);
                 pdf.text(`Total Staff Savings: Rs. ${data.savings.toLocaleString()}`, 10, 105);
                 
-                pdf.save(`Order_${orderId.substring(0,4)}.pdf`);
+                pdf.save(`Order_${orderId.substring(0,8)}.pdf`);
             }
         };
 
-        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "admin-login.html");
+        });
+        
         lucide.createIcons();
     </script>
 </body>

@@ -20,27 +20,21 @@
                 <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition">
                     <i data-lucide="layout-dashboard"></i> Dashboard
                 </a>
-                
                 <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="clipboard-list"></i> Bin Card
                 </a>
-                
                 <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="package"></i> Store Items
                 </a>
-                
                 <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="shopping-bag"></i> Orders
                 </a>
-                
                 <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
                     <i data-lucide="users"></i> Staff Members
                 </a>
-
                 <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
                     <i data-lucide="settings"></i> System Settings
                 </a>
-
                 <div class="pt-20">
                     <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
                         <i data-lucide="log-out"></i> Logout
@@ -61,59 +55,62 @@
                 </div>
             </header>
 
-            <section class="space-y-10">
+            <section class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7] hover:shadow-md transition">
-                        <div class="bg-emerald-100 text-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-4">
-                            <i data-lucide="trending-up"></i>
-                        </div>
-                        <p class="text-[#059669] text-[10px] font-black uppercase tracking-widest">Total Staff Savings</p>
-                        <h3 class="text-2xl font-black mt-1 text-[#064E3B]" id="stat-savings">Rs. 0</h3>
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
+                        <p class="text-[#059669] text-[10px] font-black uppercase tracking-widest">Orders (Month)</p>
+                        <h3 class="text-2xl font-black mt-1 text-[#064E3B]" id="stat-monthly-orders">0</h3>
                     </div>
-
-                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7] hover:shadow-md transition">
-                        <div class="bg-emerald-100 text-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-4">
-                            <i data-lucide="shopping-cart"></i>
-                        </div>
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
+                        <p class="text-[#059669] text-[10px] font-black uppercase tracking-widest">Pending Orders</p>
+                        <h3 class="text-2xl font-black mt-1 text-amber-600" id="stat-pending">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
                         <p class="text-[#059669] text-[10px] font-black uppercase tracking-widest">Welfare Sales</p>
                         <h3 class="text-2xl font-black mt-1 text-[#064E3B]" id="stat-revenue">Rs. 0</h3>
                     </div>
-
-                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7] hover:shadow-md transition">
-                        <div class="bg-emerald-100 text-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-4">
-                            <i data-lucide="users"></i>
-                        </div>
-                        <p class="text-[#059669] text-[10px] font-black uppercase tracking-widest">Active Staff</p>
-                        <h3 class="text-2xl font-black mt-1 text-[#064E3B]" id="stat-staff">0</h3>
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
+                        <p class="text-[#059669] text-[10px] font-black uppercase tracking-widest">Total Savings</p>
+                        <h3 class="text-2xl font-black mt-1 text-emerald-600" id="stat-savings">Rs. 0</h3>
                     </div>
+                </div>
 
-                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7] hover:shadow-md transition">
-                        <div class="bg-emerald-100 text-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center mb-4">
-                            <i data-lucide="package"></i>
-                        </div>
-                        <p class="text-[#059669] text-[10px] font-black uppercase tracking-widest">Inventory Items</p>
-                        <h3 class="text-2xl font-black mt-1 text-[#064E3B]" id="stat-items">0</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
+                        <p class="text-[#059669] text-[10px] font-black uppercase tracking-widest">Active Items</p>
+                        <h3 class="text-2xl font-black mt-1 text-[#064E3B]" id="stat-active">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-red-100">
+                        <p class="text-red-500 text-[10px] font-black uppercase tracking-widest">Inactive Items</p>
+                        <h3 class="text-2xl font-black mt-1 text-red-600" id="stat-inactive">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-orange-100">
+                        <p class="text-orange-500 text-[10px] font-black uppercase tracking-widest">Low Stock (< 5)</p>
+                        <h3 class="text-2xl font-black mt-1 text-orange-600" id="stat-low-stock">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-red-200">
+                        <p class="text-red-600 text-[10px] font-black uppercase tracking-widest">Out of Stock</p>
+                        <h3 class="text-2xl font-black mt-1 text-red-700" id="stat-out-stock">0</h3>
                     </div>
                 </div>
 
                 <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-[#DCFCE7]">
                     <div class="flex justify-between items-center mb-8">
                         <h3 class="text-xl font-black text-[#064E3B]">Recent Order Activities</h3>
-                        <a href="admin-orders.html" class="text-xs font-bold text-[#059669] hover:text-[#064E3B] underline transition">View All Orders</a>
+                        <a href="admin-orders.html" class="text-xs font-bold text-[#059669] underline">View All Orders</a>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead>
                                 <tr class="text-[#059669] text-[10px] uppercase tracking-widest border-b border-[#F0FDF4]">
+                                    <th class="pb-4">Order ID</th>
                                     <th class="pb-4">Date</th>
                                     <th class="pb-4">Staff Member</th>
                                     <th class="pb-4">Product</th>
-                                    <th class="pb-4">Welfare Total</th>
                                     <th class="pb-4">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="dashboardOrderTable" class="text-sm font-medium">
-                                </tbody>
+                            <tbody id="dashboardOrderTable" class="text-sm font-medium"></tbody>
                         </table>
                     </div>
                 </div>
@@ -132,8 +129,7 @@
             projectId: "inventory-c3cca",
             storageBucket: "inventory-c3cca.firebasestorage.app",
             messagingSenderId: "396140403894",
-            appId: "1:396140403894:web:316617b8e390f8b0575a17",
-            measurementId: "G-YK5X3Z6HER"
+            appId: "1:396140403894:web:316617b8e390f8b0575a17"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -151,30 +147,51 @@
         });
 
         function loadRealtimeDashboard() {
-            // 1. Load Stats
+            // Orders Stats
             onSnapshot(collection(db, "orders"), (snap) => {
                 let revenue = 0;
                 let savings = 0;
+                let pending = 0;
+                let monthlyCount = 0;
+                const now = new Date();
+
                 snap.forEach(d => {
-                    if(d.data().status !== "Cancelled") {
-                        revenue += d.data().total || 0;
-                        savings += d.data().savings || 0;
+                    const data = d.data();
+                    const orderDate = data.createdAt?.toDate();
+                    
+                    if(data.status !== "Cancelled") {
+                        revenue += data.total || 0;
+                        savings += data.savings || 0;
+                    }
+                    if(data.status === "Pending") pending++;
+                    
+                    // Monthly filter [cite: 1]
+                    if(orderDate && orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear()) {
+                        monthlyCount++;
                     }
                 });
                 document.getElementById('stat-revenue').innerText = "Rs. " + revenue.toLocaleString();
                 document.getElementById('stat-savings').innerText = "Rs. " + savings.toLocaleString();
+                document.getElementById('stat-pending').innerText = pending;
+                document.getElementById('stat-monthly-orders').innerText = monthlyCount;
             });
 
-            onSnapshot(collection(db, "users"), (snap) => {
-                const staffCount = snap.docs.filter(d => d.data().role === 'staff').length;
-                document.getElementById('stat-staff').innerText = staffCount;
-            });
-
+            // Inventory Stats [cite: 2, 3, 6, 7]
             onSnapshot(collection(db, "items"), (snap) => {
-                document.getElementById('stat-items').innerText = snap.size;
+                let active = 0, inactive = 0, lowStock = 0, outStock = 0;
+                snap.forEach(d => {
+                    const item = d.data();
+                    if(item.status === "Active") active++; else inactive++;
+                    if(item.stock <= 0) outStock++;
+                    else if(item.stock < 5) lowStock++;
+                });
+                document.getElementById('stat-active').innerText = active;
+                document.getElementById('stat-inactive').innerText = inactive;
+                document.getElementById('stat-low-stock').innerText = lowStock;
+                document.getElementById('stat-out-stock').innerText = outStock;
             });
 
-            // 2. Load Recent Orders
+            // Recent Orders with IDs 
             const qRecent = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(5));
             onSnapshot(qRecent, (snap) => {
                 const table = document.getElementById('dashboardOrderTable');
@@ -182,25 +199,19 @@
                 snap.forEach(d => {
                     const order = d.data();
                     const status = order.status || "Pending";
-                    
-                    let statusClasses = "text-amber-600 bg-amber-50";
-                    if(status === "Completed") statusClasses = "text-emerald-600 bg-emerald-50";
-                    else if(status === "Dispatched") statusClasses = "text-blue-600 bg-blue-50";
-                    else if(status === "Cancelled") statusClasses = "text-red-600 bg-red-50";
+                    let statusClasses = status === "Completed" ? "text-emerald-600 bg-emerald-50" : "text-amber-600 bg-amber-50";
 
                     table.innerHTML += `
                         <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4]/50 transition">
-                            <td class="py-5 font-bold text-[#059669]">${order.createdAt?.toDate().toLocaleDateString() || 'Today'}</td>
+                            <td class="py-5 font-black text-xs text-[#059669]">#${d.id.substring(0,8)}</td>
+                            <td class="py-5 text-[11px] font-bold">${order.createdAt?.toDate().toLocaleDateString() || 'Today'}</td>
                             <td class="py-5">
                                 <p class="font-black text-xs text-[#064E3B]">${order.staffName}</p>
-                                <p class="text-[9px] text-[#059669] uppercase tracking-wider">${order.userPosition}</p>
+                                <p class="text-[9px] text-[#059669] uppercase">${order.userPosition}</p>
                             </td>
                             <td class="py-5 text-xs font-semibold">${order.itemName}</td>
-                            <td class="py-5 font-black text-[#064E3B]">Rs. ${order.total.toLocaleString()}</td>
                             <td class="py-5">
-                                <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter ${statusClasses}">
-                                    ${status}
-                                </span>
+                                <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase ${statusClasses}">${status}</span>
                             </td>
                         </tr>
                     `;
