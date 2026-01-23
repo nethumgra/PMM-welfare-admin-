@@ -146,53 +146,66 @@
             } else { window.location.href = "admin-login.html"; }
         });
 
-        function loadRealtimeDashboard() {
-            // Orders Stats
-            onSnapshot(collection(db, "orders"), (snap) => {
-                let revenue = 0;
-                let savings = 0;
-                let pending = 0;
-                let monthlyCount = 0;
-                const now = new Date();
+      function loadRealtimeDashboard() {
+    // Orders Stats - Dispatched අයිටම් වලට විතරක් ගණන් හදමු
+   // Orders Stats Update - Dispatched අයිටම් වලට විතරක් ගණන් හදමු
+onSnapshot(collection(db, "orders"), (snap) => {
+    let revenue = 0;
+    let savings = 0;
+    let pendingCount = 0;
+    let monthlyCount = 0;
+    const now = new Date();
 
-                snap.forEach(d => {
-                    const data = d.data();
-                    const orderDate = data.createdAt?.toDate();
-                    
-                    if(data.status !== "Cancelled") {
-                        revenue += data.total || 0;
-                        savings += data.savings || 0;
-                    }
-                    if(data.status === "Pending") pending++;
-                    
-                    // Monthly filter [cite: 1]
-                    if(orderDate && orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear()) {
-                        monthlyCount++;
-                    }
-                });
-                document.getElementById('stat-revenue').innerText = "Rs. " + revenue.toLocaleString();
-                document.getElementById('stat-savings').innerText = "Rs. " + savings.toLocaleString();
-                document.getElementById('stat-pending').innerText = pending;
-                document.getElementById('stat-monthly-orders').innerText = monthlyCount;
+    snap.forEach(d => {
+        const data = d.data();
+        const orderDate = data.createdAt?.toDate();
+        
+        // ඕඩර් එක කැන්සල් කරලා නැත්නම් විතරක් ඇතුළට යනවා
+        if(data.status !== "Cancelled") {
+            // හැම ඕඩර් පැක් එකකම තියෙන අයිටම් ලූප් එකක් දාලා බලනවා
+            data.items.forEach(item => {
+                const itemStatus = item.status || "Pending";
+
+                // Dispatched හෝ Completed නම් විතරක් සල්ලි වලට එකතු කරනවා
+                if(itemStatus === "Dispatched" || itemStatus === "Completed") {
+                    revenue += (item.welfarePrice * item.qty);
+                    savings += ((item.mrpPrice - item.welfarePrice) * item.qty);
+                }
+                
+                // ඇත්තටම පෙන්ඩින් බඩු ගණන (Items count)
+                if(itemStatus === "Pending") {
+                    pendingCount++;
+                }
             });
 
-            // Inventory Stats [cite: 2, 3, 6, 7]
-            onSnapshot(collection(db, "items"), (snap) => {
-                let active = 0, inactive = 0, lowStock = 0, outStock = 0;
-                snap.forEach(d => {
-                    const item = d.data();
-                    if(item.status === "Active") active++; else inactive++;
-                    if(item.stock <= 0) outStock++;
-                    else if(item.stock < 5) lowStock++;
-                });
-                document.getElementById('stat-active').innerText = active;
-                document.getElementById('stat-inactive').innerText = inactive;
-                document.getElementById('stat-low-stock').innerText = lowStock;
-                document.getElementById('stat-out-stock').innerText = outStock;
-            });
+            // මේ මාසයේ ඕඩර් පැක් ගණන
+            if(orderDate && orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear()) {
+                monthlyCount++;
+            }
+        }
+    });
 
-            // Recent Orders with IDs 
-            const qRecent = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(5));
+    document.getElementById('stat-revenue').innerText = "Rs. " + revenue.toLocaleString();
+    document.getElementById('stat-savings').innerText = "Rs. " + savings.toLocaleString();
+    document.getElementById('stat-pending').innerText = pendingCount; 
+    document.getElementById('stat-monthly-orders').innerText = monthlyCount;
+});
+    // Inventory Stats (මේක කලින් තිබුණු විදියටම තියන්න පුළුවන්)
+    onSnapshot(collection(db, "items"), (snap) => {
+        let active = 0, inactive = 0, lowStock = 0, outStock = 0;
+        snap.forEach(d => {
+            const item = d.data();
+            if(item.status === "Active") active++; else inactive++;
+            if(item.stock <= 0) outStock++;
+            else if(item.stock < 5) lowStock++;
+        });
+        document.getElementById('stat-active').innerText = active;
+        document.getElementById('stat-inactive').innerText = inactive;
+        document.getElementById('stat-low-stock').innerText = lowStock;
+        document.getElementById('stat-out-stock').innerText = outStock;
+    });
+
+        const qRecent = query(collection(db, "orders"), orderBy("createdAt", "desc"), limit(5));
             onSnapshot(qRecent, (snap) => {
                 const table = document.getElementById('dashboardOrderTable');
                 table.innerHTML = '';
@@ -200,16 +213,22 @@
                     const order = d.data();
                     const status = order.status || "Pending";
                     let statusClasses = status === "Completed" ? "text-emerald-600 bg-emerald-50" : "text-amber-600 bg-amber-50";
+                    
+                    // --- මෙන්න මෙතන තමයි variable එක define කරන්නේ ---
+                    const orderNoDisplay = order.orderNo || '#' + d.id.substring(0, 8); 
 
                     table.innerHTML += `
                         <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4]/50 transition">
-                            <td class="py-5 font-black text-xs text-[#059669]">#${d.id.substring(0,8)}</td>
+                            <td class="py-5 font-black text-xs text-[#059669]">${orderNoDisplay}</td>
+                            
                             <td class="py-5 text-[11px] font-bold">${order.createdAt?.toDate().toLocaleDateString() || 'Today'}</td>
                             <td class="py-5">
                                 <p class="font-black text-xs text-[#064E3B]">${order.staffName}</p>
                                 <p class="text-[9px] text-[#059669] uppercase">${order.userPosition}</p>
                             </td>
-                            <td class="py-5 text-xs font-semibold">${order.itemName}</td>
+                            <td class="py-5 text-xs font-semibold">
+                                ${order.items && order.items.length > 0 ? order.items[0].name + (order.items.length > 1 ? '...' : '') : 'N/A'}
+                            </td>
                             <td class="py-5">
                                 <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase ${statusClasses}">${status}</span>
                             </td>
@@ -218,7 +237,7 @@
                 });
                 lucide.createIcons();
             });
-        }
+        } // loadRealtimeDashboard function එක මෙතනින් ඉවරයි
 
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
         lucide.createIcons();

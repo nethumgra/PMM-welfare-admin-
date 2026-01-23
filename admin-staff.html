@@ -25,7 +25,8 @@
             </div>
             
             <input type="hidden" id="editUid">
-            <input type="hidden" id="editEmailHidden"> <div class="space-y-4 max-h-[75vh] overflow-y-auto px-2">
+            <input type="hidden" id="editEmailHidden"> 
+            <div class="space-y-4 max-h-[75vh] overflow-y-auto px-2">
                 <div class="flex flex-col items-center gap-3 p-4 bg-emerald-50 rounded-3xl border border-emerald-100">
                     <img id="editImagePreview" src="" class="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-md">
                     <div class="w-full text-center">
@@ -62,6 +63,11 @@
                         <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Location</label>
                         <input type="text" id="editLocation" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm">
                     </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Monthly Spend Limit (Rs.)</label>
+                    <input type="number" id="editLimit" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-black text-sm text-emerald-700">
                 </div>
 
                 <div class="pt-4 border-t border-emerald-50">
@@ -163,6 +169,12 @@
                                 <input type="text" id="staffWhatsapp" placeholder="WhatsApp Number" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                                 <input type="text" id="staffContact" placeholder="Contact Number" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                             </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="number" id="staffLimit" placeholder="Monthly Spend Limit (Rs.)" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-black text-[#059669]">
+                                <div class="hidden md:block"></div>
+                            </div>
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <input type="email" id="staffEmail" placeholder="Email (Required for Login)" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                                 <input type="password" id="staffPassword" placeholder="Temp Password" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
@@ -207,6 +219,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // Auth Check
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -216,6 +229,7 @@
             } else { window.location.href = "admin-login.html"; }
         });
 
+        // Load Roles
         onSnapshot(collection(db, "roles"), (snap) => {
             const list = document.getElementById('rolesList');
             const selects = [document.getElementById('staffPosition'), document.getElementById('editPosition')];
@@ -229,6 +243,7 @@
             lucide.createIcons();
         });
 
+        // Register Staff Logic
         document.getElementById('regStaffBtn').addEventListener('click', async () => {
             const btn = document.getElementById('regBtnText');
             const loader = document.getElementById('regLoader');
@@ -236,6 +251,7 @@
             const epf = document.getElementById('staffEpf').value;
             const email = document.getElementById('staffEmail').value;
             const pass = document.getElementById('staffPassword').value;
+            const limit = document.getElementById('staffLimit').value; // Get Limit
             const imgFile = document.getElementById('staffImage').files[0];
 
             if(!name || !epf || !email || !pass) return alert("All fields are required for login setup!");
@@ -253,12 +269,14 @@
                 const secondaryAuth = getAuth(secondaryApp);
                 const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
 
+                // Save user with Monthly Limit
                 await setDoc(doc(db, "users", cred.user.uid), {
                     name, epfNumber: epf, email, imageUrl,
                     position: document.getElementById('staffPosition').value,
                     location: document.getElementById('staffLocation').value,
                     whatsapp: document.getElementById('staffWhatsapp').value,
                     contact: document.getElementById('staffContact').value,
+                    monthlyLimit: parseFloat(limit) || 0, // ADDED individual limit
                     role: "staff", status: "Active", createdAt: new Date()
                 });
 
@@ -267,6 +285,7 @@
             } catch (e) { alert(e.message); btn.innerText = "Register Staff Member"; loader.classList.add('hidden'); }
         });
 
+        // Load Directory
         onSnapshot(query(collection(db, "users"), where("role", "==", "staff")), (snap) => {
             const dir = document.getElementById('staffListDirectory');
             dir.innerHTML = '';
@@ -278,6 +297,7 @@
                             <img src="${staff.imageUrl}" class="w-16 h-16 rounded-2xl object-cover mb-4 border-4 border-[#F0FDF4]">
                             <h4 onclick="viewHistory('${d.id}', '${staff.name}')" class="font-black text-sm text-[#064E3B] cursor-pointer hover:underline">${staff.name}</h4>
                             <p class="text-[9px] font-black uppercase text-[#059669] opacity-70">${staff.position} | ${staff.location}</p>
+                            <p class="text-[9px] font-black text-emerald-600 mt-1">LIMIT: RS. ${staff.monthlyLimit?.toLocaleString() || 0}</p>
                             <span class="text-[8px] font-bold mt-2 px-2 py-0.5 rounded-full ${staff.status === 'Active' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">${staff.status}</span>
                         </div>
                         <div class="mt-4 pt-4 border-t border-[#F0FDF4] flex justify-between items-center">
@@ -289,6 +309,7 @@
             lucide.createIcons();
         });
 
+        // View History
         window.viewHistory = (uid, name) => {
             document.getElementById('historyStaffName').innerText = name + "'s History";
             const table = document.getElementById('historyTableBody');
@@ -305,6 +326,7 @@
             });
         };
 
+        // Open Edit Modal & Load Data
         window.openEditModal = async (uid) => {
             const d = await getDoc(doc(db, "users", uid));
             const s = d.data();
@@ -315,10 +337,12 @@
             document.getElementById('editStatus').value = s.status || "Active";
             document.getElementById('editPosition').value = s.position;
             document.getElementById('editLocation').value = s.location || "";
+            document.getElementById('editLimit').value = s.monthlyLimit || 0; // LOAD LIMIT
             document.getElementById('editImagePreview').src = s.imageUrl || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
             document.getElementById('editModal').classList.remove('hidden');
         };
 
+        // Reset Password
         document.getElementById('resetPassBtn').addEventListener('click', async () => {
             const email = document.getElementById('editEmailHidden').value;
             if(!email) return alert("Email not found for this user.");
@@ -330,6 +354,7 @@
             }
         });
 
+        // Save Edit Changes
         document.getElementById('saveEditBtn').addEventListener('click', async () => {
             const uid = document.getElementById('editUid').value;
             const newImgFile = document.getElementById('editStaffImageInput').files[0];
@@ -342,7 +367,8 @@
                     epfNumber: document.getElementById('editEpf').value,
                     status: document.getElementById('editStatus').value,
                     position: document.getElementById('editPosition').value,
-                    location: document.getElementById('editLocation').value
+                    location: document.getElementById('editLocation').value,
+                    monthlyLimit: parseFloat(document.getElementById('editLimit').value) || 0 // UPDATE LIMIT
                 };
                 if(newImgFile) {
                     const fd = new FormData(); fd.append('image', newImgFile);
@@ -354,9 +380,11 @@
             } catch (e) { alert(e.message); btn.innerText = "Update Staff Details"; loader.classList.add('hidden'); }
         });
 
+        // Other UI Functions
         window.closeEditModal = () => document.getElementById('editModal').classList.add('hidden');
         window.closeHistoryModal = () => document.getElementById('historyModal').classList.add('hidden');
         window.deleteRole = async (id) => { if(confirm("Delete role?")) await deleteDoc(doc(db, "roles", id)); };
+        
         document.getElementById('addRoleBtn').addEventListener('click', async () => {
             const name = document.getElementById('newRoleName').value;
             const limit = document.getElementById('newRoleLimit').value;

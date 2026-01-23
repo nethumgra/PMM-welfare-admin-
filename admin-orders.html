@@ -8,11 +8,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
-        .tab-active { background-color: #059669; color: white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+      
     </style>
 </head>
 <body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
@@ -40,9 +39,6 @@
                 <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
                     <i data-lucide="users"></i> Staff Members
                 </a>
-                <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
-                    <i data-lucide="settings"></i> System Settings
-                </a>
                 <div class="pt-20">
                     <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
                         <i data-lucide="log-out"></i> Logout
@@ -57,9 +53,14 @@
                     <h2 class="text-3xl font-black text-[#064E3B]">Order Management</h2>
                     <p class="text-[#059669] font-medium italic">Track lifecycle from Pending to Completed</p>
                 </div>
-                <div class="bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#DCFCE7] text-right">
-                    <p class="font-black text-[#064E3B]" id="adminNameDisplay">Admin</p>
-                    <p class="text-[10px] uppercase tracking-widest text-[#059669] font-bold">Main Admin</p>
+                <div class="flex items-center gap-4">
+                    <button onclick="clearAllOrders()" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition border border-red-100 flex items-center gap-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Clear History
+                    </button>
+                    <div class="bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#DCFCE7] text-right">
+                        <p class="font-black text-[#064E3B]" id="adminNameDisplay">Admin</p>
+                        <p class="text-[10px] uppercase tracking-widest text-[#059669] font-bold">Main Admin</p>
+                    </div>
                 </div>
             </header>
 
@@ -81,14 +82,19 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-4 mb-8">
-                <div class="bg-white p-2 rounded-[2rem] shadow-sm border border-[#DCFCE7] flex gap-1 overflow-x-auto w-fit">
-                    <button onclick="setStatusFilter('all')" id="tab-all" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition tab-active">All Orders</button>
-                    <button onclick="setStatusFilter('Pending')" id="tab-Pending" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Pending</button>
-                    <button onclick="setStatusFilter('Dispatched')" id="tab-Dispatched" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Dispatched</button>
-                    <button onclick="setStatusFilter('Completed')" id="tab-Completed" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Completed</button>
+                <div class="relative flex-1 min-w-[300px]">
+                    <input type="text" id="orderSearchInput" oninput="loadOrders()" placeholder="Search Order No or Staff Name..." 
+                        class="w-full bg-white border border-[#DCFCE7] text-[#064E3B] text-sm font-bold py-4 px-12 rounded-full focus:outline-none focus:ring-2 focus:ring-[#059669] shadow-sm">
+                    <i data-lucide="search" class="absolute left-5 top-1/2 -translate-y-1/2 text-[#059669] w-5 h-5"></i>
                 </div>
 
-                <div class="relative min-w-[200px]">
+                <div class="bg-white p-2 rounded-[2rem] shadow-sm border border-[#DCFCE7] flex gap-1 overflow-x-auto w-fit">
+                    <button onclick="setStatusFilter('all')" id="tab-all" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition tab-active">All</button>
+                    <button onclick="setStatusFilter('Pending')" id="tab-Pending" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Pending</button>
+                    <button onclick="setStatusFilter('Dispatched')" id="tab-Dispatched" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Dispatched</button>
+                </div>
+
+                <div class="relative min-w-[180px]">
                     <select id="positionFilter" onchange="setPositionFilter(this.value)" 
                         class="w-full bg-white border border-[#DCFCE7] text-[#064E3B] text-[10px] font-black uppercase py-4 px-6 rounded-full appearance-none focus:outline-none focus:ring-2 focus:ring-[#059669] shadow-sm cursor-pointer">
                         <option value="all">All Positions</option>
@@ -97,11 +103,8 @@
                         <option value="Staff">Staff</option>
                         <option value="Worker">Worker</option>
                         <option value="Driver">Driver</option>
-                        <option value="Security">Security</option>
                     </select>
-                    <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-[#059669]">
-                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </div>
+                    <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 text-[#059669] w-4 h-4 pointer-events-none"></i>
                 </div>
             </div>
 
@@ -110,7 +113,7 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-[#F0FDF4] text-[#059669] text-[10px] uppercase tracking-widest border-b border-[#DCFCE7]">
-                                <th class="p-6">Order No & Item</th>
+                                <th class="p-6">Order No & Items</th>
                                 <th class="p-6">Staff Member</th>
                                 <th class="p-6 text-center">Status</th>
                                 <th class="p-6">Financials</th>
@@ -118,7 +121,7 @@
                             </tr>
                         </thead>
                         <tbody id="ordersTableBody" class="text-sm font-medium text-[#064E3B]">
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
@@ -128,7 +131,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, query, where, doc, getDoc, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, query, where, doc, getDoc, orderBy, updateDoc, deleteDoc, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB3jlpc_vbUydda2XpDj5Xd1J8kVei9v8U",
@@ -144,154 +147,178 @@
         const db = getFirestore(app);
 
         let currentStatusFilter = 'all';
-        let currentPositionFilter = 'all'; // New state for position
+        let currentPositionFilter = 'all';
         let unsubscribeOrders = null;
+        let currentAdminName = "Admin";
 
-        // Auth Protection & Init
+        // Auth Protection
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 if (userDoc.exists() && userDoc.data().role === "admin") {
-                    document.getElementById('adminNameDisplay').innerText = userDoc.data().name;
+                    currentAdminName = userDoc.data().name;
+                    document.getElementById('adminNameDisplay').innerText = currentAdminName;
                     loadOrders();
                 } else { window.location.href = "admin-login.html"; }
             } else { window.location.href = "admin-login.html"; }
         });
 
-        // Load and Listen to Orders with Dual Filtering
+        // Load & Filter Orders
         window.loadOrders = () => {
             const tableBody = document.getElementById('ordersTableBody');
+            const searchTerm = document.getElementById('orderSearchInput').value.toLowerCase().trim();
             if (unsubscribeOrders) unsubscribeOrders();
 
-            const constraints = [];
-            
-            // Apply Status Filter
-            if (currentStatusFilter !== 'all') {
-                constraints.push(where("status", "==", currentStatusFilter));
-            }
-
-            // Apply Position Filter (Added machn)
-            if (currentPositionFilter !== 'all') {
-                constraints.push(where("userPosition", "==", currentPositionFilter));
-            }
-
+            let constraints = [];
+            if (currentStatusFilter !== 'all') constraints.push(where("status", "==", currentStatusFilter));
+            if (currentPositionFilter !== 'all') constraints.push(where("userPosition", "==", currentPositionFilter));
             constraints.push(orderBy("createdAt", "desc"));
 
             const q = query(collection(db, "orders"), ...constraints);
 
             unsubscribeOrders = onSnapshot(q, (snap) => {
                 tableBody.innerHTML = '';
-                let totalRev = 0;
-                let totalSave = 0;
-                
+                let totalRev = 0; let totalSave = 0;
+
                 snap.forEach(d => {
                     const order = d.data();
                     const id = d.id;
-                    const status = order.status || "Pending";
-                    const orderDate = order.createdAt?.toDate().toLocaleDateString() || 'Today';
+
+                    const orderNo = order.orderNo || id.substring(0, 8).toUpperCase();
+                    const staffName = order.staffName || "Unknown Staff";
                     
-                    if(status !== "Cancelled") {
-                        totalRev += order.total || 0;
-                        totalSave += order.savings || 0;
+                    // Search Logic (Client Side)
+                    if (searchTerm && !orderNo.toLowerCase().includes(searchTerm) && !staffName.toLowerCase().includes(searchTerm)) return;
+
+                    // Calculate Financials (Only for dispatched items)
+                    if(order.status !== "Cancelled") {
+                        (order.items || []).forEach(item => {
+                            if(item.status === "Dispatched" || item.status === "Completed") {
+                                totalRev += (item.welfarePrice * item.qty);
+                                totalSave += ((item.mrpPrice - item.welfarePrice) * item.qty);
+                            }
+                        });
                     }
 
-                    let statusBadgeClass = "bg-amber-100 text-amber-600";
-                    if (status === "Dispatched") statusBadgeClass = "bg-blue-100 text-blue-600";
-                    if (status === "Completed") statusBadgeClass = "bg-emerald-100 text-emerald-600";
-                    if (status === "Cancelled") statusBadgeClass = "bg-red-100 text-red-600";
+                    // Status Badge Style
+                    let statusClass = "bg-amber-100 text-amber-600";
+                    if(order.status === "Dispatched") statusClass = "bg-blue-100 text-blue-600";
+                    if(order.status === "Completed") statusClass = "bg-emerald-100 text-emerald-600";
 
-                    let actionButtons = "";
-                    if (status === "Pending") {
-                        actionButtons = `
-                            <button onclick="updateOrderStatus('${id}', 'Dispatched')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg" title="Dispatch">
-                                <i data-lucide="truck" class="w-5 h-5"></i>
-                            </button>
-                            <button onclick="updateOrderStatus('${id}', 'Completed')" class="text-emerald-600 hover:bg-emerald-50 p-2 rounded-lg" title="Complete">
-                                <i data-lucide="check-circle" class="w-5 h-5"></i>
-                            </button>`;
-                    } else if (status === "Dispatched") {
-                        actionButtons = `
-                            <button onclick="updateOrderStatus('${id}', 'Completed')" class="text-emerald-600 hover:bg-emerald-50 p-2 rounded-lg" title="Complete">
-                                <i data-lucide="check-circle" class="w-5 h-5"></i>
-                            </button>`;
-                    } else {
-                        actionButtons = `<span class="text-emerald-500"><i data-lucide="check-check" class="w-5 h-5"></i></span>`;
-                    }
-
-                    tableBody.innerHTML += `
-                        <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4] transition">
-                            <td class="p-6">
-                                <p class="font-black text-[#064E3B]">#${id.substring(0,8).toUpperCase()}</p>
-                                <p class="font-bold text-[#059669] text-xs">${order.itemName}</p>
-                                <p class="text-[9px] text-gray-400 uppercase">${orderDate}</p>
-                            </td>
-                            <td class="p-6">
-                                <p class="font-bold text-sm text-[#064E3B]">${order.staffName}</p>
-                                <p class="text-[10px] text-[#059669] uppercase tracking-tighter italic">${order.userPosition}</p>
-                            </td>
-                            <td class="p-6 text-center">
-                                <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${statusBadgeClass}">${status}</span>
-                            </td>
-                            <td class="p-6">
-                                <p class="font-black text-[#064E3B]">Rs. ${order.total.toLocaleString()}</p>
-                                <p class="text-[9px] text-emerald-600 font-bold uppercase">Saving: Rs. ${order.savings.toLocaleString()}</p>
-                            </td>
-                            <td class="p-6 text-right">
-                                <div class="flex justify-end items-center gap-2">
-                                    ${actionButtons}
-                                    <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2 rounded-xl hover:bg-[#064E3B] transition">
-                                        <i data-lucide="download" class="w-4 h-4"></i>
-                                    </button>
+                    // Items List Html
+                    let itemsHtml = (order.items || []).map((item, index) => `
+                        <div class="flex justify-between items-center p-3 border-b border-emerald-50 last:border-0 bg-white">
+                            <div class="flex items-center gap-3">
+                                <span class="w-2 h-2 rounded-full ${item.status === 'Dispatched' ? 'bg-blue-500' : 'bg-amber-500'}"></span>
+                                <div>
+                                    <p class="font-bold text-[11px]">${item.name} (x${item.qty})</p>
+                                    <p class="text-[9px] font-black uppercase text-gray-400">${item.status || 'Pending'}</p>
                                 </div>
-                            </td>
-                        </tr>`;
+                            </div>
+                            ${(item.status !== 'Dispatched' && order.status !== 'Cancelled') ? `
+                                <button onclick="dispatchIndividualItem('${id}', ${index})" class="text-[9px] bg-emerald-600 text-white px-3 py-1 rounded-lg font-black hover:bg-emerald-700 transition uppercase">Dispatch</button>
+                            ` : (item.status === 'Dispatched' ? '<i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>' : '')}
+                        </div>`).join('');
+
+                   tableBody.innerHTML += `
+    <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4]/50 transition">
+        <td class="p-6">
+            <p class="font-black text-[#064E3B] text-lg tracking-tight">${orderNo}</p> 
+            
+            <details class="mt-3 group cursor-pointer">
+                <summary class="list-none outline-none flex items-center gap-2 text-[#059669] text-[10px] font-black uppercase underline decoration-dotted">
+                    <i data-lucide="chevron-right" class="w-3 h-3 group-open:rotate-90 transition"></i> 
+                    View ${order.items ? order.items.length : 0} Items
+                </summary>
+                <div class="mt-3 border border-emerald-100 rounded-2xl overflow-hidden shadow-inner">${itemsHtml}</div>
+            </details>
+        </td>
+        <td class="p-6">
+            <p class="font-bold text-sm text-[#064E3B]">${staffName}</p>
+            <p class="text-[10px] text-[#059669] uppercase italic font-bold">${order.userPosition || 'Staff'}</p>
+        </td>
+        <td class="p-6 text-center">
+            <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${statusClass}">${order.status}</span>
+        </td>
+        <td class="p-6 font-black text-[#064E3B]">
+            Rs. ${order.total.toLocaleString()}
+            <p class="text-[9px] text-emerald-600">Savings: Rs. ${order.savings.toLocaleString()}</p>
+        </td>
+        <td class="p-6 text-right">
+            <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2 rounded-xl hover:bg-[#064E3B] transition">
+                <i data-lucide="download" class="w-4 h-4"></i>
+            </button>
+        </td>
+    </tr>`;
                 });
 
                 document.getElementById('totalRevenueDisplay').innerText = `Rs. ${totalRev.toLocaleString()}`;
                 document.getElementById('totalSavingsDisplay').innerText = `Rs. ${totalSave.toLocaleString()}`;
                 lucide.createIcons();
-            }, (error) => {
-                // If there's an index error, it will show here
-                console.error("Firestore Error:", error);
-                if(error.message.includes("index")) {
-                    alert("Filter එක වැඩ කරන්න නම් Firebase වල Index එකක් හදන්න ඕනේ. Browser Console එකේ තියෙන Link එක ක්ලික් කරන්න.");
-                }
             });
         };
 
-        // Update Logic
-        window.updateOrderStatus = async (id, newStatus) => {
-            if(!confirm(`Update order status to ${newStatus}?`)) return;
+        // Dispatch Individual Item & Log to Bin Card
+        window.dispatchIndividualItem = async (orderId, itemIndex) => {
+            if(!confirm("මෙම භාණ්ඩය Dispatch කිරීමට අවශ්‍යද?")) return;
             try {
-                const orderRef = doc(db, "orders", id);
-                const updateData = { status: newStatus };
-                if(newStatus === 'Dispatched') updateData.dispatchedAt = new Date();
-                if(newStatus === 'Completed') updateData.completedAt = new Date();
+                const orderRef = doc(db, "orders", orderId);
+                const orderSnap = await getDoc(orderRef);
+                const orderData = orderSnap.data();
+                let items = [...orderData.items];
                 
-                await updateDoc(orderRef, updateData);
+                items[itemIndex].status = "Dispatched";
+                const allDispatched = items.every(i => i.status === "Dispatched");
+                
+                const updatePayload = { items: items };
+                if(allDispatched) updatePayload.status = "Dispatched";
+                await updateDoc(orderRef, updatePayload);
+
+                // Update Bin Card (Inventory Logs)
+                const itemToDispatch = items[itemIndex];
+                const itemRef = doc(db, "items", itemToDispatch.itemId);
+                const itemSnap = await getDoc(itemRef);
+                
+                await addDoc(collection(db, "inventory_logs"), {
+                    itemId: itemToDispatch.itemId,
+                    itemName: itemToDispatch.name,
+                    type: "OUT",
+                    qty: itemToDispatch.qty,
+                    balance: itemSnap.exists() ? itemSnap.data().stock : 0,
+                    processedBy: currentAdminName,
+                    createdAt: new Date(),
+                    note: `Dispatched from Order #${orderData.orderNo || orderId.substring(0,8)}`
+                });
+
+                alert("භාණ්ඩය Dispatch කළා සහ Bin Card එකට ඇතුළත් කළා!");
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        // UI Filtering - Status
+        // Filters logic
         window.setStatusFilter = (status) => {
             currentStatusFilter = status;
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('tab-active');
-                btn.classList.add('text-[#059669]', 'hover:bg-[#F0FDF4]');
-            });
-            const activeTab = document.getElementById('tab-' + status);
-            activeTab.classList.add('tab-active');
-            activeTab.classList.remove('text-[#059669]', 'hover:bg-[#F0FDF4]');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+            document.getElementById('tab-' + status).classList.add('tab-active');
             loadOrders();
         };
 
-        // UI Filtering - Position (Added machn)
         window.setPositionFilter = (pos) => {
             currentPositionFilter = pos;
             loadOrders();
         };
 
-        // PDF Generation
+        // Clear All Orders
+        window.clearAllOrders = async () => {
+            if (!confirm("අවධානයයි! සියලුම ඕඩර් හිස්ට්‍රිය මැකීමට ඔබට විශ්වාසද? මෙය නැවත ලබා ගත නොහැක.")) return;
+            try {
+                const querySnapshot = await getDocs(collection(db, "orders"));
+                const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "orders", d.id)));
+                await Promise.all(deletePromises);
+                alert("සියලුම ඕඩර් හිස්ට්‍රිය සාර්ථකව මකා දමන ලදී.");
+            } catch (e) { alert("Error: " + e.message); }
+        };
+
+        // Invoice Download
         window.downloadAdminInvoice = async (orderId) => {
             const docSnap = await getDoc(doc(db, "orders", orderId));
             if (docSnap.exists()) {
@@ -303,36 +330,33 @@
                 pdf.setTextColor(5, 150, 105); 
                 pdf.text("PMM WELFARE RECEIPT", 50, 15, { align: "center" });
                 
-                pdf.setTextColor(0, 0, 0);
-                pdf.setFontSize(10);
-                pdf.text(`Order ID: #${orderId.substring(0,8).toUpperCase()}`, 10, 30);
-                pdf.text(`Status: ${data.status.toUpperCase()}`, 10, 35);
-                pdf.text(`Date: ${data.createdAt?.toDate().toLocaleDateString()}`, 10, 40);
+                pdf.setTextColor(0, 0, 0); pdf.setFontSize(9);
+                pdf.text(`Order No: #${data.orderNo || orderId.substring(0,8)}`, 10, 30);
+                pdf.text(`Staff: ${data.staffName}`, 10, 38);
+                pdf.text(`Role: ${data.userPosition}`, 10, 44);
+                pdf.text(`Date: ${data.createdAt?.toDate().toLocaleDateString()}`, 10, 50);
                 
-                pdf.text("------------------------------------------", 50, 45, { align: "center" });
+                pdf.text("--------------------------------------------------", 50, 58, { align: "center" });
                 
-                pdf.text(`Staff: ${data.staffName}`, 10, 55);
-                pdf.text(`Role: ${data.userPosition}`, 10, 60);
-                
-                pdf.setFont("helvetica", "bold");
-                pdf.text(`Item: ${data.itemName}`, 10, 75);
-                pdf.setFont("helvetica", "normal");
-                pdf.text(`Qty: ${data.qty}`, 10, 80);
-                
-                pdf.setFont("helvetica", "bold");
-                pdf.text(`Welfare Price: Rs. ${data.total.toLocaleString()}`, 10, 95);
-                
+                let y = 68;
+                (data.items || []).forEach(item => {
+                    pdf.text(`${item.name} (x${item.qty})`, 10, y);
+                    pdf.text(`Rs. ${(item.welfarePrice * item.qty).toLocaleString()}`, 90, y, { align: "right" });
+                    y += 8;
+                });
+
+                pdf.text("--------------------------------------------------", 50, y + 5, { align: "center" });
+                pdf.setFontSize(11);
+                pdf.text(`TOTAL: Rs. ${data.total.toLocaleString()}`, 10, y + 15);
+                pdf.setFontSize(9);
                 pdf.setTextColor(5, 150, 105);
-                pdf.text(`Total Staff Savings: Rs. ${data.savings.toLocaleString()}`, 10, 105);
-                
-                pdf.save(`Order_${orderId.substring(0,8)}.pdf`);
+                pdf.text(`You Saved: Rs. ${data.savings.toLocaleString()}`, 10, y + 22);
+
+                pdf.save(`Order_${data.orderNo || orderId.substring(0,5)}.pdf`);
             }
         };
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = "admin-login.html");
-        });
-        
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
         lucide.createIcons();
     </script>
 </body>
