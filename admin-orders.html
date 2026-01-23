@@ -11,7 +11,6 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
-      
     </style>
 </head>
 <body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
@@ -53,10 +52,15 @@
                     <h2 class="text-3xl font-black text-[#064E3B]">Order Management</h2>
                     <p class="text-[#059669] font-medium italic">Track lifecycle from Pending to Completed</p>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="exportPurchaseReport()" class="bg-blue-50 text-blue-600 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase hover:bg-blue-600 hover:text-white transition border border-blue-100 flex items-center gap-2">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> Purchase Report
+                    </button>
+                    
                     <button onclick="clearAllOrders()" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition border border-red-100 flex items-center gap-2">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> Clear History
                     </button>
+                    
                     <div class="bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#DCFCE7] text-right">
                         <p class="font-black text-[#064E3B]" id="adminNameDisplay">Admin</p>
                         <p class="text-[10px] uppercase tracking-widest text-[#059669] font-bold">Main Admin</p>
@@ -95,16 +99,11 @@
                 </div>
 
                 <div class="relative min-w-[180px]">
-                    <select id="positionFilter" onchange="setPositionFilter(this.value)" 
+                  <select id="positionFilter" onchange="setPositionFilter(this.value)" 
                         class="w-full bg-white border border-[#DCFCE7] text-[#064E3B] text-[10px] font-black uppercase py-4 px-6 rounded-full appearance-none focus:outline-none focus:ring-2 focus:ring-[#059669] shadow-sm cursor-pointer">
                         <option value="all">All Positions</option>
-                        <option value="Executive">Executive</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Staff">Staff</option>
-                        <option value="Worker">Worker</option>
-                        <option value="Driver">Driver</option>
-                    </select>
-                    <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 text-[#059669] w-4 h-4 pointer-events-none"></i>
+                  </select>
+                  <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 text-[#059669] w-4 h-4 pointer-events-none"></i>
                 </div>
             </div>
 
@@ -120,8 +119,7 @@
                                 <th class="p-6 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="ordersTableBody" class="text-sm font-medium text-[#064E3B]">
-                            </tbody>
+                        <tbody id="ordersTableBody" class="text-sm font-medium text-[#064E3B]"></tbody>
                     </table>
                 </div>
             </div>
@@ -151,7 +149,6 @@
         let unsubscribeOrders = null;
         let currentAdminName = "Admin";
 
-        // Auth Protection
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -163,7 +160,6 @@
             } else { window.location.href = "admin-login.html"; }
         });
 
-        // Load & Filter Orders
         window.loadOrders = () => {
             const tableBody = document.getElementById('ordersTableBody');
             const searchTerm = document.getElementById('orderSearchInput').value.toLowerCase().trim();
@@ -183,14 +179,11 @@
                 snap.forEach(d => {
                     const order = d.data();
                     const id = d.id;
-
                     const orderNo = order.orderNo || id.substring(0, 8).toUpperCase();
                     const staffName = order.staffName || "Unknown Staff";
                     
-                    // Search Logic (Client Side)
                     if (searchTerm && !orderNo.toLowerCase().includes(searchTerm) && !staffName.toLowerCase().includes(searchTerm)) return;
 
-                    // Calculate Financials (Only for dispatched items)
                     if(order.status !== "Cancelled") {
                         (order.items || []).forEach(item => {
                             if(item.status === "Dispatched" || item.status === "Completed") {
@@ -200,12 +193,10 @@
                         });
                     }
 
-                    // Status Badge Style
                     let statusClass = "bg-amber-100 text-amber-600";
                     if(order.status === "Dispatched") statusClass = "bg-blue-100 text-blue-600";
                     if(order.status === "Completed") statusClass = "bg-emerald-100 text-emerald-600";
 
-                    // Items List Html
                     let itemsHtml = (order.items || []).map((item, index) => `
                         <div class="flex justify-between items-center p-3 border-b border-emerald-50 last:border-0 bg-white">
                             <div class="flex items-center gap-3">
@@ -220,36 +211,35 @@
                             ` : (item.status === 'Dispatched' ? '<i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>' : '')}
                         </div>`).join('');
 
-                   tableBody.innerHTML += `
-    <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4]/50 transition">
-        <td class="p-6">
-            <p class="font-black text-[#064E3B] text-lg tracking-tight">${orderNo}</p> 
-            
-            <details class="mt-3 group cursor-pointer">
-                <summary class="list-none outline-none flex items-center gap-2 text-[#059669] text-[10px] font-black uppercase underline decoration-dotted">
-                    <i data-lucide="chevron-right" class="w-3 h-3 group-open:rotate-90 transition"></i> 
-                    View ${order.items ? order.items.length : 0} Items
-                </summary>
-                <div class="mt-3 border border-emerald-100 rounded-2xl overflow-hidden shadow-inner">${itemsHtml}</div>
-            </details>
-        </td>
-        <td class="p-6">
-            <p class="font-bold text-sm text-[#064E3B]">${staffName}</p>
-            <p class="text-[10px] text-[#059669] uppercase italic font-bold">${order.userPosition || 'Staff'}</p>
-        </td>
-        <td class="p-6 text-center">
-            <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${statusClass}">${order.status}</span>
-        </td>
-        <td class="p-6 font-black text-[#064E3B]">
-            Rs. ${order.total.toLocaleString()}
-            <p class="text-[9px] text-emerald-600">Savings: Rs. ${order.savings.toLocaleString()}</p>
-        </td>
-        <td class="p-6 text-right">
-            <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2 rounded-xl hover:bg-[#064E3B] transition">
-                <i data-lucide="download" class="w-4 h-4"></i>
-            </button>
-        </td>
-    </tr>`;
+                    tableBody.innerHTML += `
+                    <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4]/50 transition">
+                        <td class="p-6">
+                            <p class="font-black text-[#064E3B] text-lg tracking-tight">${orderNo}</p> 
+                            <details class="mt-3 group cursor-pointer">
+                                <summary class="list-none outline-none flex items-center gap-2 text-[#059669] text-[10px] font-black uppercase underline decoration-dotted">
+                                    <i data-lucide="chevron-right" class="w-3 h-3 group-open:rotate-90 transition"></i> 
+                                    View ${order.items ? order.items.length : 0} Items
+                                </summary>
+                                <div class="mt-3 border border-emerald-100 rounded-2xl overflow-hidden shadow-inner">${itemsHtml}</div>
+                            </details>
+                        </td>
+                        <td class="p-6">
+                            <p class="font-bold text-sm text-[#064E3B]">${staffName}</p>
+                            <p class="text-[10px] text-[#059669] uppercase italic font-bold">${order.userPosition || 'Staff'}</p>
+                        </td>
+                        <td class="p-6 text-center">
+                            <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${statusClass}">${order.status}</span>
+                        </td>
+                        <td class="p-6 font-black text-[#064E3B]">
+                            Rs. ${order.total.toLocaleString()}
+                            <p class="text-[9px] text-emerald-600">Savings: Rs. ${order.savings.toLocaleString()}</p>
+                        </td>
+                        <td class="p-6 text-right">
+                            <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2 rounded-xl hover:bg-[#064E3B] transition">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                            </button>
+                        </td>
+                    </tr>`;
                 });
 
                 document.getElementById('totalRevenueDisplay').innerText = `Rs. ${totalRev.toLocaleString()}`;
@@ -258,7 +248,6 @@
             });
         };
 
-        // Dispatch Individual Item & Log to Bin Card
         window.dispatchIndividualItem = async (orderId, itemIndex) => {
             if(!confirm("මෙම භාණ්ඩය Dispatch කිරීමට අවශ්‍යද?")) return;
             try {
@@ -274,7 +263,6 @@
                 if(allDispatched) updatePayload.status = "Dispatched";
                 await updateDoc(orderRef, updatePayload);
 
-                // Update Bin Card (Inventory Logs)
                 const itemToDispatch = items[itemIndex];
                 const itemRef = doc(db, "items", itemToDispatch.itemId);
                 const itemSnap = await getDoc(itemRef);
@@ -294,7 +282,6 @@
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        // Filters logic
         window.setStatusFilter = (status) => {
             currentStatusFilter = status;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
@@ -307,7 +294,6 @@
             loadOrders();
         };
 
-        // Clear All Orders
         window.clearAllOrders = async () => {
             if (!confirm("අවධානයයි! සියලුම ඕඩර් හිස්ට්‍රිය මැකීමට ඔබට විශ්වාසද? මෙය නැවත ලබා ගත නොහැක.")) return;
             try {
@@ -318,42 +304,99 @@
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        // Invoice Download
         window.downloadAdminInvoice = async (orderId) => {
             const docSnap = await getDoc(doc(db, "orders", orderId));
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
-                
                 pdf.setFont("helvetica", "bold");
                 pdf.setTextColor(5, 150, 105); 
                 pdf.text("PMM WELFARE RECEIPT", 50, 15, { align: "center" });
-                
                 pdf.setTextColor(0, 0, 0); pdf.setFontSize(9);
                 pdf.text(`Order No: #${data.orderNo || orderId.substring(0,8)}`, 10, 30);
                 pdf.text(`Staff: ${data.staffName}`, 10, 38);
                 pdf.text(`Role: ${data.userPosition}`, 10, 44);
                 pdf.text(`Date: ${data.createdAt?.toDate().toLocaleDateString()}`, 10, 50);
-                
                 pdf.text("--------------------------------------------------", 50, 58, { align: "center" });
-                
                 let y = 68;
                 (data.items || []).forEach(item => {
                     pdf.text(`${item.name} (x${item.qty})`, 10, y);
                     pdf.text(`Rs. ${(item.welfarePrice * item.qty).toLocaleString()}`, 90, y, { align: "right" });
                     y += 8;
                 });
-
                 pdf.text("--------------------------------------------------", 50, y + 5, { align: "center" });
                 pdf.setFontSize(11);
                 pdf.text(`TOTAL: Rs. ${data.total.toLocaleString()}`, 10, y + 15);
                 pdf.setFontSize(9);
                 pdf.setTextColor(5, 150, 105);
                 pdf.text(`You Saved: Rs. ${data.savings.toLocaleString()}`, 10, y + 22);
-
                 pdf.save(`Order_${data.orderNo || orderId.substring(0,5)}.pdf`);
             }
+        };
+
+        // --- Purchase Report Logic ---
+        window.exportPurchaseReport = async () => {
+            try {
+                // 1. Pending ඕඩර්ස් ලබා ගැනීම
+                const qOrders = query(collection(db, "orders"), where("status", "==", "Pending"));
+                const orderSnap = await getDocs(qOrders);
+                if (orderSnap.empty) return alert("දැනට පෙන්ඩින් ඕඩර්ස් කිසිවක් නොමැත!");
+
+                // 2. අයිටම් වල අවශ්‍යතාවය ගණනය කිරීම
+                const summary = {};
+                orderSnap.forEach(d => {
+                    const data = d.data();
+                    (data.items || []).forEach(item => {
+                        if (item.status !== "Dispatched" && item.status !== "Completed") {
+                            if (!summary[item.name]) summary[item.name] = { needed: 0, itemId: item.itemId };
+                            summary[item.name].needed += item.qty;
+                        }
+                    });
+                });
+
+                // 3. දැනට ඇති ස්ටොක් ප්‍රමාණයන් ලබා ගැනීම
+                const itemSnap = await getDocs(collection(db, "items"));
+                itemSnap.forEach(d => {
+                    for (let name in summary) {
+                        if (summary[name].itemId === d.id) summary[name].currentStock = d.data().stock || 0;
+                    }
+                });
+
+                // 4. PDF සෑදීම
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF();
+                pdf.setFont("helvetica", "bold");
+                pdf.setFontSize(18); pdf.setTextColor(5, 150, 105);
+                pdf.text("PMM WELFARE - PURCHASE REPORT", 105, 20, { align: "center" });
+                pdf.setFontSize(10); pdf.setTextColor(100);
+                pdf.text(`Generated: ${new Date().toLocaleString()}`, 105, 28, { align: "center" });
+                
+                pdf.setFontSize(11); pdf.setTextColor(0);
+                pdf.setFillColor(240, 253, 244);
+                pdf.rect(15, 35, 180, 10, 'F');
+                pdf.text("Item Name", 20, 42); pdf.text("Required Qty", 100, 42);
+                pdf.text("Stock Available", 140, 42); pdf.text("Shortage", 175, 42);
+                pdf.line(15, 45, 195, 45);
+
+                let y = 55; pdf.setFont("helvetica", "normal");
+                for (let name in summary) {
+                    const item = summary[name];
+                    const stock = item.currentStock || 0;
+                    const shortage = Math.max(0, item.needed - stock);
+                    if (y > 270) { pdf.addPage(); y = 20; }
+                    pdf.text(name, 20, y);
+                    pdf.text(item.needed.toString(), 110, y, { align: "center" });
+                    pdf.text(stock.toString(), 150, y, { align: "center" });
+                    if (shortage > 0) {
+                        pdf.setTextColor(220, 38, 38); pdf.setFont("helvetica", "bold");
+                        pdf.text(shortage.toString(), 182, y, { align: "center" });
+                        pdf.setTextColor(0); pdf.setFont("helvetica", "normal");
+                    } else { pdf.text("0", 182, y, { align: "center" }); }
+                    y += 10; pdf.setDrawColor(240); pdf.line(15, y - 5, 195, y - 5);
+                }
+                pdf.save(`Purchase_List_${new Date().toISOString().slice(0,10)}.pdf`);
+            } catch (e) { alert("Report generation failed!"); }
         };
 
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));

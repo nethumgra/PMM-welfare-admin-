@@ -60,8 +60,9 @@
                         <select id="editPosition" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm"></select>
                     </div>
                     <div>
-                        <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Location</label>
-                        <input type="text" id="editLocation" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm">
+                        <select id="editLocation" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm">
+    <option value="" disabled selected>Choose Office Location</option>
+</select>
                     </div>
                 </div>
 
@@ -162,8 +163,9 @@
                                 <input type="text" id="staffEpf" placeholder="EPF Number" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <select id="staffPosition" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold"></select>
-                                <input type="text" id="staffLocation" placeholder="Location (Ex: Plant A)" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                               <select id="staffLocation" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                                    <option value="" disabled selected>Choose Office Location</option>
+                                </select>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <input type="text" id="staffWhatsapp" placeholder="WhatsApp Number" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
@@ -242,6 +244,18 @@
             });
             lucide.createIcons();
         });
+
+        // Load Locations from Settings
+onSnapshot(collection(db, "locations"), (snap) => {
+    const selects = [document.getElementById('staffLocation'), document.getElementById('editLocation')];
+    selects.forEach(s => {
+        s.innerHTML = '<option value="" disabled selected>Choose Office Location</option>';
+        snap.forEach(d => {
+            const locName = d.data().name;
+            s.innerHTML += `<option value="${locName}">${locName}</option>`;
+        });
+    });
+});
 
         // Register Staff Logic
         document.getElementById('regStaffBtn').addEventListener('click', async () => {
@@ -397,4 +411,4 @@
         lucide.createIcons();
     </script>
 </body>
-</html>
+</html>v
