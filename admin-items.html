@@ -232,36 +232,71 @@
         }
 
         // Add Item
-        document.getElementById('addItemBtn').addEventListener('click', async () => {
-            const name = document.getElementById('itemName').value;
-            const stock = parseInt(document.getElementById('itemStock').value);
-            const imageFile = document.getElementById('itemImage').files[0];
-            
-            if(!name || isNaN(stock) || !imageFile) return alert("Missing fields!");
+      // --- admin-items.html හි "Add Item" Event Listener එක මේ විදියට අප්ඩේට් කරන්න ---
 
-            const loader = document.getElementById('loader');
-            const btnText = document.getElementById('btnText');
-            loader.classList.remove('hidden'); btnText.innerText = "Processing...";
+document.getElementById('addItemBtn').addEventListener('click', async () => {
+    const name = document.getElementById('itemName').value;
+    // මෙතන ID එක 'itemQty' විය යුතුයි (HTML එකේ තියෙන්නේ itemQty නිසා)
+    const stock = parseInt(document.getElementById('itemQty').value); 
+    const mrpPrice = parseFloat(document.getElementById('mrpPrice').value);
+    const welfarePrice = parseFloat(document.getElementById('welfarePrice').value);
+    const status = document.getElementById('itemStatus').value;
+    const imageFile = document.getElementById('itemImage').files[0];
+    
+    // Validation
+    if(!name || isNaN(stock) || isNaN(mrpPrice) || isNaN(welfarePrice) || !imageFile) {
+        return alert("කරුණාකර සියලුම විස්තර සහ පින්තූරයක් ඇතුළත් කරන්න!");
+    }
 
-            try {
-                const formData = new FormData(); formData.append('image', imageFile);
-                const res = await fetch(`https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07`, { method: 'POST', body: formData });
-                const imgData = await res.json();
+    const loader = document.getElementById('loader');
+    const btnText = document.getElementById('btnText');
+    loader.classList.remove('hidden'); 
+    btnText.innerText = "Processing...";
 
-                const limits = {};
-                document.querySelectorAll('.role-limit-input').forEach(i => limits[i.dataset.role] = parseInt(i.value) || 0);
+    try {
+        const formData = new FormData(); 
+        formData.append('image', imageFile);
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07`, { method: 'POST', body: formData });
+        const imgData = await res.json();
 
-                const itemRef = await addDoc(collection(db, "items"), {
-                    name, stock, mrpPrice: parseFloat(document.getElementById('mrpPrice').value),
-                    welfarePrice: parseFloat(document.getElementById('welfarePrice').value),
-                    status: document.getElementById('itemStatus').value,
-                    imageUrl: imgData.data.display_url, limits, createdAt: serverTimestamp()
-                });
+        if(!imgData.success) throw new Error("Image upload failed");
 
-                await addDoc(collection(db, "inventory_logs"), { itemId: itemRef.id, itemName: name, type: "IN", qty: stock, balance: stock, createdAt: serverTimestamp() });
-                location.reload();
-            } catch (e) { alert(e.message); }
+        const limits = {};
+        document.querySelectorAll('.role-limit-input').forEach(i => {
+            limits[i.dataset.role] = parseInt(i.value) || 0;
         });
+
+        const itemRef = await addDoc(collection(db, "items"), {
+            name, 
+            stock, 
+            mrpPrice,
+            welfarePrice,
+            status,
+            imageUrl: imgData.data.display_url, 
+            limits, 
+            createdAt: serverTimestamp()
+        });
+
+        // Bin Card එකට මුල්ම ස්ටොක් එක ඇතුළත් කිරීම
+        await addDoc(collection(db, "inventory_logs"), { 
+            itemId: itemRef.id, 
+            itemName: name, 
+            type: "IN", 
+            qty: stock, 
+            balance: stock, 
+            processedBy: document.getElementById('adminNameDisplay').innerText,
+            createdAt: serverTimestamp() 
+        });
+
+        alert("භාණ්ඩය සාර්ථකව ඇතුළත් කළා!");
+        location.reload();
+    } catch (e) { 
+        alert("වැරදීමක් සිදු වුණා: " + e.message); 
+    } finally {
+        loader.classList.add('hidden');
+        btnText.innerText = "Add to Inventory";
+    }
+});
 
         // Table Loading
         function loadItems() {
