@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - PMM Welfare Shop</title>
+    <title>System Settings - PMM Welfare Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
+        .permission-card:has(input:checked) { border-color: #10b981; background-color: #ecfdf5; }
     </style>
 </head>
-<body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
+<body class="bg-[#F0FDF4] text-[#064E3B]">
 
     <div class="flex min-h-screen">
         <aside class="fixed inset-y-0 left-0 z-50 w-64 bg-[#064E3B] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
@@ -22,28 +25,14 @@
                 </h1>
             </div>
             <nav class="mt-6 px-4 space-y-2">
-                <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
-                    <i data-lucide="layout-dashboard"></i> Dashboard
-                </a>
-                <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
-                    <i data-lucide="clipboard-list"></i> Bin Card
-                </a>
-                <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
-                    <i data-lucide="package"></i> Store Items
-                </a>
-                <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
-                    <i data-lucide="shopping-bag"></i> Orders
-                </a>
-                <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
-                    <i data-lucide="users"></i> Staff Members
-                </a>
-                <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition group">
-                    <i data-lucide="settings"></i> System Settings
-                </a>
+                <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="clipboard-list"></i> Bin Card</a>
+                <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="package"></i> Store Items</a>
+                <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="shopping-bag"></i> Orders</a>
+                <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition"><i data-lucide="users"></i> Staff Members</a>
+                <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition"><i data-lucide="settings"></i> System Settings</a>
                 <div class="pt-20">
-                    <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
-                        <i data-lucide="log-out"></i> Logout
-                    </button>
+                    <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100"><i data-lucide="log-out"></i> Logout</button>
                 </div>
             </nav>
         </aside>
@@ -52,38 +41,34 @@
             <header class="mb-10 flex justify-between items-end">
                 <div>
                     <h2 class="text-3xl font-black text-[#064E3B]">System Settings</h2>
-                    <p class="text-[#059669] font-medium italic">Store identity, banners and admin management</p>
+                    <p class="text-[#059669] font-medium italic">Full control over store identity, banners and permissions</p>
                 </div>
             </header>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
-                    <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#064E3B]">
-                        <i data-lucide="globe" class="text-[#059669]"></i> Store Identity
-                    </h3>
+                    <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#064E3B]"><i data-lucide="globe"></i> Store Identity</h3>
                     <div class="space-y-4">
                         <div class="flex items-center gap-4 mb-4">
-                            <img id="logoPreview" src="" class="w-16 h-16 rounded-xl border object-contain bg-gray-50 p-2">
+                            <img id="logoPreview" src="https://placehold.co/100x100?text=Logo" class="w-16 h-16 rounded-xl border object-contain bg-gray-50 p-2">
                             <div class="flex-1">
-                                <label class="text-[10px] font-bold text-[#059669] uppercase tracking-widest block ml-2">Company Logo</label>
+                                <label class="text-[10px] font-bold text-[#059669] uppercase tracking-widest block ml-2">Update Company Logo</label>
                                 <input type="file" id="logoInput" accept="image/*" class="text-xs w-full mt-1">
                             </div>
                         </div>
                         <div>
-                            <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Store Name</label>
-                            <input type="text" id="siteNameInput" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                            <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Store Display Name</label>
+                            <input type="text" id="siteNameInput" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold focus:outline-emerald-500">
                         </div>
                         <button id="saveIdentityBtn" class="bg-[#059669] text-white px-8 py-4 rounded-2xl font-black hover:bg-[#047857] transition shadow-lg w-full">Update Identity</button>
                     </div>
                 </div>
 
                 <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
-                    <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#064E3B]">
-                        <i data-lucide="map-pin" class="text-[#059669]"></i> Office Locations
-                    </h3>
+                    <h3 class="text-xl font-black mb-6 flex items-center gap-2 text-[#064E3B]"><i data-lucide="map-pin"></i> Office Locations</h3>
                     <div class="space-y-4">
                         <div class="flex gap-2">
-                            <input type="text" id="newLocInput" placeholder="Ex: Colombo Head Office" class="flex-1 p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                            <input type="text" id="newLocInput" placeholder="Ex: Colombo Head Office" class="flex-1 p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold focus:outline-emerald-500">
                             <button id="addLocBtn" class="bg-[#059669] text-white px-6 rounded-2xl font-black hover:bg-[#047857]">Add</button>
                         </div>
                         <div id="locList" class="flex flex-wrap gap-2 mt-4"></div>
@@ -96,26 +81,26 @@
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Select Role</label>
-                            <select id="bannerRoleSelect" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold mb-4"></select>
-                            <p class="text-[10px] text-gray-400 italic">Select a role to set a custom banner for them.</p>
+                            <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Select User Role</label>
+                            <select id="bannerRoleSelect" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold mb-4 focus:outline-emerald-500"></select>
+                            <p class="text-[10px] text-gray-400 italic px-2">Select a specific role to customize the store banner they see.</p>
                         </div>
                         <div class="md:col-span-2 space-y-4 p-6 bg-[#F0FDF4] rounded-3xl border border-[#DCFCE7]">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="text" id="bannerTitle" placeholder="Banner Title" class="p-4 rounded-xl border border-[#DCFCE7] font-bold text-sm">
-                                <input type="text" id="bannerSub" placeholder="Banner Subtitle" class="p-4 rounded-xl border border-[#DCFCE7] font-bold text-sm">
+                                <input type="text" id="bannerTitle" placeholder="Banner Heading Text" class="p-4 rounded-xl border border-[#DCFCE7] font-bold text-sm">
+                                <input type="text" id="bannerSub" placeholder="Banner Sub-text" class="p-4 rounded-xl border border-[#DCFCE7] font-bold text-sm">
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="text-[9px] font-black uppercase ml-1">Desktop (1200x400)</label>
+                                    <label class="text-[9px] font-black uppercase ml-1">Desktop Image (1200x400)</label>
                                     <input type="file" id="deskImg" class="w-full text-xs mt-1">
                                 </div>
                                 <div>
-                                    <label class="text-[9px] font-black uppercase ml-1">Mobile (600x800)</label>
+                                    <label class="text-[9px] font-black uppercase ml-1">Mobile Image (600x800)</label>
                                     <input type="file" id="mobImg" class="w-full text-xs mt-1">
                                 </div>
                             </div>
-                            <button id="saveBannerBtn" class="w-full bg-[#059669] text-white p-4 rounded-2xl font-black shadow-lg flex justify-center items-center gap-2">
+                            <button id="saveBannerBtn" class="w-full bg-[#059669] text-white p-4 rounded-2xl font-black shadow-lg flex justify-center items-center gap-2 hover:bg-[#047857] transition">
                                 <span id="bannerBtnText">Update Banner for Selected Role</span>
                                 <div id="bannerLoader" class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                             </button>
@@ -126,21 +111,67 @@
                 <div id="superAdminSection" class="hidden lg:col-span-2 bg-white p-8 rounded-[3rem] shadow-sm border-2 border-emerald-100">
                     <div class="flex justify-between items-center mb-8">
                         <h3 class="text-xl font-black text-[#064E3B] flex items-center gap-2">
-                            <i data-lucide="shield-check" class="text-emerald-600"></i> Admin User Management (Super Admin Only)
+                            <i data-lucide="shield-check" class="text-emerald-600"></i> Admin Access & Permissions
                         </h3>
-                        <button onclick="toggleAdminForm()" class="bg-emerald-600 text-white px-6 py-2 rounded-full text-xs font-black">Add New Admin</button>
+                        <button onclick="toggleAdminForm()" class="bg-emerald-600 text-white px-6 py-3 rounded-2xl text-xs font-black shadow-lg hover:bg-emerald-700 transition">Add New Admin</button>
                     </div>
 
-                    <div id="adminForm" class="hidden mb-10 p-8 bg-[#F0FDF4] rounded-[2.5rem] border border-[#DCFCE7]">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <input type="text" id="newAdminName" placeholder="Admin Full Name" class="p-4 rounded-2xl border border-[#DCFCE7] font-bold">
-                            <input type="email" id="newAdminEmail" placeholder="Admin Email" class="p-4 rounded-2xl border border-[#DCFCE7] font-bold">
-                            <input type="password" id="newAdminPass" placeholder="Temporary Password" class="p-4 rounded-2xl border border-[#DCFCE7] font-bold">
+                    <div id="adminForm" class="hidden mb-10 p-8 bg-[#F0FDF4] rounded-[2.5rem] border border-[#DCFCE7] animate-in fade-in zoom-in duration-300">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <label class="text-[10px] font-black uppercase ml-2 text-emerald-700">Admin Name</label>
+                                <input type="text" id="newAdminName" placeholder="Full Name" class="w-full p-4 rounded-2xl border border-[#DCFCE7] font-bold focus:outline-emerald-500">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black uppercase ml-2 text-emerald-700">Email Address</label>
+                                <input type="email" id="newAdminEmail" placeholder="email@example.com" class="w-full p-4 rounded-2xl border border-[#DCFCE7] font-bold focus:outline-emerald-500">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black uppercase ml-2 text-emerald-700">Temporary Password</label>
+                                <input type="password" id="newAdminPass" placeholder="••••••••" class="w-full p-4 rounded-2xl border border-[#DCFCE7] font-bold focus:outline-emerald-500">
+                            </div>
                         </div>
-                        <button id="createAdminBtn" class="mt-4 bg-[#064E3B] text-white px-10 py-4 rounded-2xl font-black shadow-xl">Create Admin Account</button>
+
+                        <label class="text-[11px] font-black uppercase ml-2 text-emerald-800 mb-4 block underline">Assign Page Access Permissions:</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+                            <label class="permission-card border border-emerald-100 bg-white p-4 rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all hover:shadow-md">
+                                <input type="checkbox" id="p_dashboard" class="hidden peer" checked>
+                                <i data-lucide="layout-dashboard" class="w-5 h-5 text-emerald-600"></i>
+                                <span class="text-[10px] font-black text-center uppercase">Dashboard</span>
+                            </label>
+                            <label class="permission-card border border-emerald-100 bg-white p-4 rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all hover:shadow-md">
+                                <input type="checkbox" id="p_bincard" class="hidden peer">
+                                <i data-lucide="clipboard-list" class="w-5 h-5 text-emerald-600"></i>
+                                <span class="text-[10px] font-black text-center uppercase">Bin Card</span>
+                            </label>
+                            <label class="permission-card border border-emerald-100 bg-white p-4 rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all hover:shadow-md">
+                                <input type="checkbox" id="p_items" class="hidden peer">
+                                <i data-lucide="package" class="w-5 h-5 text-emerald-600"></i>
+                                <span class="text-[10px] font-black text-center uppercase">Store Items</span>
+                            </label>
+                            <label class="permission-card border border-emerald-100 bg-white p-4 rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all hover:shadow-md">
+                                <input type="checkbox" id="p_orders" class="hidden peer">
+                                <i data-lucide="shopping-bag" class="w-5 h-5 text-emerald-600"></i>
+                                <span class="text-[10px] font-black text-center uppercase">Orders</span>
+                            </label>
+                            <label class="permission-card border border-emerald-100 bg-white p-4 rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all hover:shadow-md">
+                                <input type="checkbox" id="p_staff" class="hidden peer">
+                                <i data-lucide="users" class="w-5 h-5 text-emerald-600"></i>
+                                <span class="text-[10px] font-black text-center uppercase">Staff Members</span>
+                            </label>
+                            <label class="permission-card border border-emerald-100 bg-white p-4 rounded-2xl flex flex-col items-center gap-2 cursor-pointer transition-all hover:shadow-md">
+                                <input type="checkbox" id="p_settings" class="hidden peer">
+                                <i data-lucide="settings" class="w-5 h-5 text-emerald-600"></i>
+                                <span class="text-[10px] font-black text-center uppercase">Settings</span>
+                            </label>
+                        </div>
+
+                        <button id="createAdminBtn" class="bg-[#064E3B] text-white px-10 py-4 rounded-2xl font-black shadow-xl hover:bg-black transition flex items-center gap-2">
+                            Create Admin Account <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="adminList"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="adminList"></div>
                 </div>
             </div>
         </main>
@@ -163,16 +194,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        let isSuperAdmin = false;
 
+        // --- AUTH CHECK ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
                 const data = userDoc.data();
                 if(data.role === "admin") {
-                    // Check if it's the main creator (Super User) [cite: 39]
                     if(data.isSuperAdmin || data.email === "admin@inventory.com") {
-                        isSuperAdmin = true;
                         document.getElementById('superAdminSection').classList.remove('hidden');
                         loadAdmins();
                     }
@@ -181,22 +210,23 @@
             } else { window.location.href = "admin-login.html"; }
         });
 
-        // 1. Identity & Logo Upload 
+        // --- LOAD SETTINGS & DATA ---
         async function loadSettings() {
+            // Identity
             const siteSnap = await getDoc(doc(db, "settings", "site"));
             if(siteSnap.exists()) {
-                document.getElementById('siteNameInput').value = siteSnap.data().name;
+                document.getElementById('siteNameInput').value = siteSnap.data().name || "";
                 document.getElementById('logoPreview').src = siteSnap.data().logoUrl || "";
             }
 
-            // Load roles for banner selection 
+            // Roles for Banner Selection
             onSnapshot(collection(db, "roles"), (snap) => {
                 const select = document.getElementById('bannerRoleSelect');
                 select.innerHTML = '<option value="" disabled selected>Select Role</option>';
                 snap.forEach(d => select.innerHTML += `<option value="${d.data().name}">${d.data().name}</option>`);
             });
 
-            // Load Locations 
+            // Locations
             onSnapshot(collection(db, "locations"), (snap) => {
                 const list = document.getElementById('locList');
                 list.innerHTML = '';
@@ -207,6 +237,7 @@
             });
         }
 
+        // --- IDENTITY ACTIONS ---
         document.getElementById('saveIdentityBtn').addEventListener('click', async () => {
             const name = document.getElementById('siteNameInput').value;
             const logoFile = document.getElementById('logoInput').files[0];
@@ -219,28 +250,18 @@
             }
 
             await setDoc(doc(db, "settings", "site"), { name, logoUrl }, { merge: true });
-            alert("Identity Updated!");
+            alert("Identity Updated Successfully!");
             location.reload();
         });
 
-        // 2. Locations 
-        document.getElementById('addLocBtn').addEventListener('click', async () => {
-            const name = document.getElementById('newLocInput').value;
-            if(!name) return;
-            await addDoc(collection(db, "locations"), { name });
-            document.getElementById('newLocInput').value = '';
-        });
-
-        window.deleteLocation = async (id) => { if(confirm("Delete location?")) await deleteDoc(doc(db, "locations", id)); };
-
-        // 3. Role Based Banners 
+        // --- BANNER ACTIONS ---
         document.getElementById('saveBannerBtn').addEventListener('click', async () => {
             const role = document.getElementById('bannerRoleSelect').value;
-            if(!role) return alert("Select a role first!");
+            if(!role) return alert("Please select a role first!");
             
             const btn = document.getElementById('bannerBtnText');
             const loader = document.getElementById('bannerLoader');
-            btn.innerText = "Uploading..."; loader.classList.remove('hidden');
+            btn.innerText = "Processing..."; loader.classList.remove('hidden');
 
             try {
                 let deskUrl = "", mobUrl = "";
@@ -261,18 +282,19 @@
                 const updateData = {
                     title: document.getElementById('bannerTitle').value,
                     subtitle: document.getElementById('bannerSub').value,
-                    role: role
+                    role: role,
+                    updatedAt: new Date()
                 };
                 if(deskUrl) updateData.desktopUrl = deskUrl;
                 if(mobUrl) updateData.mobileUrl = mobUrl;
 
                 await setDoc(doc(db, "settings", `banner_${role}`), updateData, { merge: true });
-                alert(`Banner updated for ${role}!`);
+                alert(`Banner successfully updated for ${role}!`);
             } catch (e) { alert(e.message); }
             finally { btn.innerText = "Update Banner for Selected Role"; loader.classList.add('hidden'); }
         });
 
-        // 4. Admin Management [cite: 38, 39, 40]
+        // --- ADMIN MANAGEMENT ACTIONS ---
         window.toggleAdminForm = () => document.getElementById('adminForm').classList.toggle('hidden');
 
         document.getElementById('createAdminBtn').addEventListener('click', async () => {
@@ -280,16 +302,28 @@
             const email = document.getElementById('newAdminEmail').value;
             const pass = document.getElementById('newAdminPass').value;
 
+            if(!name || !email || !pass) return alert("All fields are required!");
+
+            const perms = {
+                dashboard: document.getElementById('p_dashboard').checked,
+                binCard: document.getElementById('p_bincard').checked,
+                items: document.getElementById('p_items').checked,
+                orders: document.getElementById('p_orders').checked,
+                staff: document.getElementById('p_staff').checked,
+                settings: document.getElementById('p_settings').checked
+            };
+
             const secondaryApp = initializeApp(firebaseConfig, "AdminCreator");
             const secondaryAuth = getAuth(secondaryApp);
 
             try {
                 const cred = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
                 await setDoc(doc(db, "users", cred.user.uid), {
-                    name, email, role: "admin", isSuperAdmin: false, status: "Active", createdAt: new Date()
+                    name, email, role: "admin", isSuperAdmin: false, status: "Active", permissions: perms, createdAt: new Date()
                 });
                 await signOut(secondaryAuth); await deleteApp(secondaryApp);
-                alert("Admin Account Created!"); toggleAdminForm();
+                alert("New Admin Created with Permissions!");
+                toggleAdminForm();
             } catch (e) { alert(e.message); }
         });
 
@@ -299,20 +333,31 @@
                 list.innerHTML = '';
                 snap.forEach(d => {
                     const adm = d.data();
-                    if(adm.email === auth.currentUser.email) return; // Don't show self
-                    
+                    if(adm.email === auth.currentUser.email) return;
+
+                    let permBadges = "";
+                    if(adm.permissions) {
+                        Object.entries(adm.permissions).forEach(([key, val]) => {
+                            if(val) permBadges += `<span class="bg-white text-[7px] border px-1 rounded uppercase font-black mr-1">${key}</span>`;
+                        });
+                    }
+
                     list.innerHTML += `
-                        <div class="p-6 bg-[#F0FDF4] rounded-3xl border border-[#DCFCE7] shadow-sm">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
+                        <div class="p-6 bg-[#F0FDF4] rounded-3xl border border-[#DCFCE7] shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
                                     <h4 class="font-black text-sm text-[#064E3B]">${adm.name}</h4>
-                                    <p class="text-[10px] text-[#059669]">${adm.email}</p>
+                                    <span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${adm.status === 'Active' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">${adm.status}</span>
                                 </div>
-                                <span class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${adm.status === 'Active' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">${adm.status}</span>
+                                <p class="text-[10px] text-[#059669] mb-4">${adm.email}</p>
+                                <div class="mb-4">
+                                    <p class="text-[8px] uppercase font-bold text-gray-400 mb-1">Access Pages:</p>
+                                    <div class="flex flex-wrap gap-y-1">${permBadges || '<span class="text-[8px] text-red-400">No Access</span>'}</div>
+                                </div>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="updateAdminStatus('${d.id}', '${adm.status === 'Active' ? 'Inactive' : 'Active'}')" class="flex-1 bg-white text-[10px] font-black py-2 rounded-xl border border-emerald-100 hover:bg-emerald-50">${adm.status === 'Active' ? 'Deactivate' : 'Activate'}</button>
-                                <button onclick="deleteAdmin('${d.id}')" class="p-2 text-red-400 hover:bg-red-50 rounded-xl"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <button onclick="updateAdminStatus('${d.id}', '${adm.status === 'Active' ? 'Inactive' : 'Active'}')" class="flex-1 bg-white text-[10px] font-black py-2 rounded-xl border border-emerald-100 hover:bg-emerald-50 transition">Toggle Status</button>
+                                <button onclick="deleteAdmin('${d.id}')" class="p-2 text-red-400 hover:bg-red-50 rounded-xl transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </div>
                         </div>`;
                 });
@@ -320,10 +365,20 @@
             });
         }
 
+        
         window.updateAdminStatus = async (uid, newStatus) => { await updateDoc(doc(db, "users", uid), { status: newStatus }); };
-        window.deleteAdmin = async (uid) => { if(confirm("Permanently remove this admin?")) await deleteDoc(doc(db, "users", uid)); };
+        window.deleteAdmin = async (uid) => { if(confirm("Permanently remove this admin account?")) await deleteDoc(doc(db, "users", uid)); };
+        window.deleteLocation = async (id) => { if(confirm("Delete this location?")) await deleteDoc(doc(db, "locations", id)); };
+        
+        document.getElementById('addLocBtn').addEventListener('click', async () => {
+            const name = document.getElementById('newLocInput').value;
+            if(!name) return;
+            await addDoc(collection(db, "locations"), { name });
+            document.getElementById('newLocInput').value = '';
+        });
 
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
+        
         lucide.createIcons();
     </script>
 </body>

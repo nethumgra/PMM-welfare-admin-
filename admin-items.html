@@ -66,10 +66,15 @@
                                 <input type="text" id="itemName" placeholder="Ex: Smart Watch" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] transition">
                             </div>
 
+                            <div>
+                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-wide text-orange-600">Highlight Tag (Optional)</label>
+                                <input type="text" id="itemTag" placeholder="Ex: New, Hot Deal, Sale" class="w-full p-4 rounded-2xl bg-orange-50 border border-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-400 transition italic font-bold">
+                            </div>
+
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="text-[10px] font-bold text-[#059669] uppercase ml-2">MRP Price</label>
-                                    <input type="number" id="mrpPrice" placeholder="0.00" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold">
+                                    <input type="number" id="mrpPrice" placeholder="0.00" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                                 </div>
                                 <div>
                                     <label class="text-[10px] font-bold text-[#059669] uppercase ml-2">Welfare Price</label>
@@ -80,11 +85,11 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="text-[10px] font-bold text-[#059669] uppercase ml-2">Initial Stock</label>
-                                  <input type="number" id="itemQty" placeholder="Optional" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold">
+                                    <input type="number" id="itemQty" placeholder="0" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                                 </div>
                                 <div>
                                     <label class="text-[10px] font-bold text-[#059669] uppercase ml-2">Status</label>
-                                    <select id="itemStatus" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] focus:outline-none focus:ring-2 focus:ring-[#059669] font-bold">
+                                    <select id="itemStatus" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
                                         <option value="In Stock">In Stock</option>
                                         <option value="Out of Stock">Out of Stock</option>
                                     </select>
@@ -93,8 +98,8 @@
 
                             <div class="p-4 bg-[#F0FDF4] rounded-3xl border border-[#DCFCE7]">
                                 <p class="text-[10px] font-black text-[#059669] uppercase mb-3 tracking-widest">Monthly Item Limits (Qty)</p>
-                                <div id="roleLimitsContainer" class="grid grid-cols-2 gap-3">
-                                    <p class="text-[10px] text-emerald-300 col-span-2 italic text-center">Loading roles...</p>
+                                <div id="roleLimitsContainer" class="grid grid-cols-2 gap-3 text-center">
+                                    <p class="text-[10px] text-emerald-300 col-span-2 italic">Loading roles...</p>
                                 </div>
                             </div>
 
@@ -156,8 +161,14 @@
 
                 <div class="md:col-span-2">
                     <label class="text-[10px] font-bold text-[#059669] uppercase ml-2">Product Name</label>
-                    <input type="text" id="editItemName" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
+                    <input type="text" id="editItemName" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-[#064E3B]">
                 </div>
+
+                <div class="md:col-span-2">
+                    <label class="text-[10px] font-bold text-orange-600 uppercase ml-2 tracking-wide">Highlight Tag</label>
+                    <input type="text" id="editItemTag" placeholder="Ex: New Arrival" class="w-full p-4 rounded-2xl bg-orange-50 border border-orange-100 font-bold italic text-orange-700">
+                </div>
+
                 <div>
                     <label class="text-[10px] font-bold text-[#059669] uppercase ml-2">Stock Qty</label>
                     <input type="number" id="editItemStock" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold">
@@ -201,7 +212,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Security & Auth
+        // Security check
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -213,7 +224,6 @@
             } else { window.location.href = "admin-login.html"; }
         });
 
-        // Dynamic Role Inputs
         function setupDynamicRoles() {
             onSnapshot(collection(db, "roles"), (snap) => {
                 const container = document.getElementById('roleLimitsContainer');
@@ -231,92 +241,90 @@
             });
         }
 
-        // Add Item
-      // --- admin-items.html හි "Add Item" Event Listener එක මේ විදියට අප්ඩේට් කරන්න ---
+        // Add Item with Tag
+        document.getElementById('addItemBtn').addEventListener('click', async () => {
+            const name = document.getElementById('itemName').value;
+            const itemTag = document.getElementById('itemTag').value; // Tag එක ගන්නවා
+            const stock = parseInt(document.getElementById('itemQty').value); 
+            const mrpPrice = parseFloat(document.getElementById('mrpPrice').value);
+            const welfarePrice = parseFloat(document.getElementById('welfarePrice').value);
+            const status = document.getElementById('itemStatus').value;
+            const imageFile = document.getElementById('itemImage').files[0];
+            
+            if(!name || isNaN(stock) || isNaN(mrpPrice) || isNaN(welfarePrice) || !imageFile) {
+                return alert("කරුණාකර සියලුම විස්තර සහ පින්තූරයක් ඇතුළත් කරන්න!");
+            }
 
-document.getElementById('addItemBtn').addEventListener('click', async () => {
-    const name = document.getElementById('itemName').value;
-    // මෙතන ID එක 'itemQty' විය යුතුයි (HTML එකේ තියෙන්නේ itemQty නිසා)
-    const stock = parseInt(document.getElementById('itemQty').value); 
-    const mrpPrice = parseFloat(document.getElementById('mrpPrice').value);
-    const welfarePrice = parseFloat(document.getElementById('welfarePrice').value);
-    const status = document.getElementById('itemStatus').value;
-    const imageFile = document.getElementById('itemImage').files[0];
-    
-    // Validation
-    if(!name || isNaN(stock) || isNaN(mrpPrice) || isNaN(welfarePrice) || !imageFile) {
-        return alert("කරුණාකර සියලුම විස්තර සහ පින්තූරයක් ඇතුළත් කරන්න!");
-    }
+            const loader = document.getElementById('loader');
+            const btnText = document.getElementById('btnText');
+            loader.classList.remove('hidden'); btnText.innerText = "Processing...";
 
-    const loader = document.getElementById('loader');
-    const btnText = document.getElementById('btnText');
-    loader.classList.remove('hidden'); 
-    btnText.innerText = "Processing...";
+            try {
+                const formData = new FormData(); 
+                formData.append('image', imageFile);
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07`, { method: 'POST', body: formData });
+                const imgData = await res.json();
 
-    try {
-        const formData = new FormData(); 
-        formData.append('image', imageFile);
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07`, { method: 'POST', body: formData });
-        const imgData = await res.json();
+                if(!imgData.success) throw new Error("Image upload failed");
 
-        if(!imgData.success) throw new Error("Image upload failed");
+                const limits = {};
+                document.querySelectorAll('.role-limit-input').forEach(i => {
+                    limits[i.dataset.role] = parseInt(i.value) || 0;
+                });
 
-        const limits = {};
-        document.querySelectorAll('.role-limit-input').forEach(i => {
-            limits[i.dataset.role] = parseInt(i.value) || 0;
+                const itemRef = await addDoc(collection(db, "items"), {
+                    name, 
+                    itemTag, // Firestore එකට save කරනවා
+                    stock, 
+                    mrpPrice,
+                    welfarePrice,
+                    status,
+                    imageUrl: imgData.data.display_url, 
+                    limits, 
+                    createdAt: serverTimestamp()
+                });
+
+                await addDoc(collection(db, "inventory_logs"), { 
+                    itemId: itemRef.id, 
+                    itemName: name, 
+                    type: "IN", 
+                    qty: stock, 
+                    balance: stock, 
+                    processedBy: document.getElementById('adminNameDisplay').innerText,
+                    createdAt: serverTimestamp() 
+                });
+
+                alert("භාණ්ඩය සාර්ථකව ඇතුළත් කළා!");
+                location.reload();
+            } catch (e) { alert("වැරදීමක්: " + e.message); }
+            finally { loader.classList.add('hidden'); btnText.innerText = "Add to Inventory"; }
         });
 
-        const itemRef = await addDoc(collection(db, "items"), {
-            name, 
-            stock, 
-            mrpPrice,
-            welfarePrice,
-            status,
-            imageUrl: imgData.data.display_url, 
-            limits, 
-            createdAt: serverTimestamp()
-        });
-
-        // Bin Card එකට මුල්ම ස්ටොක් එක ඇතුළත් කිරීම
-        await addDoc(collection(db, "inventory_logs"), { 
-            itemId: itemRef.id, 
-            itemName: name, 
-            type: "IN", 
-            qty: stock, 
-            balance: stock, 
-            processedBy: document.getElementById('adminNameDisplay').innerText,
-            createdAt: serverTimestamp() 
-        });
-
-        alert("භාණ්ඩය සාර්ථකව ඇතුළත් කළා!");
-        location.reload();
-    } catch (e) { 
-        alert("වැරදීමක් සිදු වුණා: " + e.message); 
-    } finally {
-        loader.classList.add('hidden');
-        btnText.innerText = "Add to Inventory";
-    }
-});
-
-        // Table Loading
+        // Load Items with Tag Highlight
         function loadItems() {
             onSnapshot(collection(db, "items"), (snap) => {
                 const table = document.getElementById('itemTableBody');
                 table.innerHTML = '';
                 snap.forEach(d => {
                     const item = d.data();
+                    // ටැග් එකක් තියෙනවා නම් විතරක් පෙන්වන Badge එක
+                    const tagBadge = item.itemTag ? `<span class="block text-[9px] font-black bg-orange-500 text-white px-2 py-0.5 rounded-md mt-1 w-max shadow-sm uppercase tracking-tighter italic"># ${item.itemTag}</span>` : '';
+
                     table.innerHTML += `
-                        <tr class="border-b border-emerald-50">
+                        <tr class="border-b border-emerald-50 hover:bg-emerald-50/30 transition">
                             <td class="py-4 flex items-center gap-3">
-                                <img src="${item.imageUrl}" class="w-10 h-10 rounded-lg object-cover">
-                                <p class="font-bold">${item.name}</p>
+                                <img src="${item.imageUrl}" class="w-12 h-12 rounded-xl object-cover border border-emerald-100 shadow-sm">
+                                <div>
+                                    <p class="font-bold text-[#064E3B] leading-tight">${item.name}</p>
+                                    ${tagBadge}
+                                </div>
                             </td>
-                            <td class="py-4 font-black">Rs. ${item.welfarePrice}</td>
+                            <td class="py-4 font-black text-emerald-600">Rs. ${item.welfarePrice.toLocaleString()}</td>
                             <td class="py-4 font-bold text-lg">${item.stock}</td>
-                            <td class="py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-600">${item.stock > 0 ? 'IN STOCK' : 'OUT OF STOCK'}</span></td>
+                            <td class="py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black ${item.stock > 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}">${item.stock > 0 ? 'IN STOCK' : 'OUT OF STOCK'}</span></td>
                             <td class="py-4 text-right">
-                                <button onclick="window.openEditItemModal('${d.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                                <button onclick="window.deleteItem('${d.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <button onclick="window.openEditItemModal('${d.id}')" class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                <button onclick="window.deleteItem('${d.id}')" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </td>
                         </tr>`;
                 });
@@ -324,12 +332,13 @@ document.getElementById('addItemBtn').addEventListener('click', async () => {
             });
         }
 
-        // Edit Modal Functions
+        // Edit Modal
         window.openEditItemModal = async (id) => {
             const d = await getDoc(doc(db, "items", id));
             const item = d.data();
             document.getElementById('editItemId').value = id;
             document.getElementById('editItemName').value = item.name;
+            document.getElementById('editItemTag').value = item.itemTag || ''; // Tag එක fill කරනවා
             document.getElementById('editItemStock').value = item.stock;
             document.getElementById('editMrpPrice').value = item.mrpPrice;
             document.getElementById('editWelfarePrice').value = item.welfarePrice;
@@ -337,7 +346,6 @@ document.getElementById('addItemBtn').addEventListener('click', async () => {
             
             document.querySelectorAll('.edit-role-limit-input').forEach(i => i.value = item.limits ? (item.limits[i.dataset.role] || 0) : 0);
             document.getElementById('editItemModal').classList.remove('hidden');
-            lucide.createIcons();
         };
 
         window.closeEditItemModal = () => document.getElementById('editItemModal').classList.add('hidden');
@@ -354,7 +362,6 @@ document.getElementById('addItemBtn').addEventListener('click', async () => {
                 const oldDoc = await getDoc(doc(db, "items", id));
                 let imageUrl = oldDoc.data().imageUrl;
 
-                // If new image selected, upload it
                 if (newImageFile) {
                     const formData = new FormData(); formData.append('image', newImageFile);
                     const res = await fetch(`https://api.imgbb.com/1/upload?key=fb6365d6c7a493fa14ff7596b4e39e07`, { method: 'POST', body: formData });
@@ -368,12 +375,12 @@ document.getElementById('addItemBtn').addEventListener('click', async () => {
                 const newStock = parseInt(document.getElementById('editItemStock').value);
                 await updateDoc(doc(db, "items", id), {
                     name: document.getElementById('editItemName').value,
+                    itemTag: document.getElementById('editItemTag').value, // Edit කරපු tag එක save කරනවා
                     stock: newStock, imageUrl, limits,
                     mrpPrice: parseFloat(document.getElementById('editMrpPrice').value),
                     welfarePrice: parseFloat(document.getElementById('editWelfarePrice').value)
                 });
 
-                // Log Bin Card if stock changed
                 if(newStock !== oldDoc.data().stock) {
                     const diff = newStock - oldDoc.data().stock;
                     await addDoc(collection(db, "inventory_logs"), {
@@ -389,7 +396,7 @@ document.getElementById('addItemBtn').addEventListener('click', async () => {
             finally { editLoader.classList.add('hidden'); editBtnText.innerText = "Update Product Details"; }
         });
 
-        window.deleteItem = async (id) => { if(confirm("Permanently delete?")) await deleteDoc(doc(db, "items", id)); };
+        window.deleteItem = async (id) => { if(confirm("අයිටම් එක සම්පූර්ණයෙන්ම ඉවත් කරන්නද?")) await deleteDoc(doc(db, "items", id)); };
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
         lucide.createIcons();
     </script>

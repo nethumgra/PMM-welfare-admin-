@@ -11,6 +11,7 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
+        .tab-active { background-color: #059669; color: white; }
     </style>
 </head>
 <body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
@@ -197,19 +198,26 @@
                     if(order.status === "Dispatched") statusClass = "bg-blue-100 text-blue-600";
                     if(order.status === "Completed") statusClass = "bg-emerald-100 text-emerald-600";
 
-                    let itemsHtml = (order.items || []).map((item, index) => `
+                    let itemsHtml = (order.items || []).map((item, index) => {
+                        const isActionable = (item.status !== 'Dispatched' && item.status !== 'Rejected' && order.status !== 'Cancelled');
+                        
+                        return `
                         <div class="flex justify-between items-center p-3 border-b border-emerald-50 last:border-0 bg-white">
                             <div class="flex items-center gap-3">
-                                <span class="w-2 h-2 rounded-full ${item.status === 'Dispatched' ? 'bg-blue-500' : 'bg-amber-500'}"></span>
+                                <span class="w-2 h-2 rounded-full ${item.status === 'Dispatched' ? 'bg-blue-500' : (item.status === 'Rejected' ? 'bg-red-500' : 'bg-amber-500')}"></span>
                                 <div>
                                     <p class="font-bold text-[11px]">${item.name} (x${item.qty})</p>
-                                    <p class="text-[9px] font-black uppercase text-gray-400">${item.status || 'Pending'}</p>
+                                    <p class="text-[9px] font-black uppercase ${item.status === 'Rejected' ? 'text-red-500' : 'text-gray-400'}">${item.status || 'Pending'}</p>
                                 </div>
                             </div>
-                            ${(item.status !== 'Dispatched' && order.status !== 'Cancelled') ? `
-                                <button onclick="dispatchIndividualItem('${id}', ${index})" class="text-[9px] bg-emerald-600 text-white px-3 py-1 rounded-lg font-black hover:bg-emerald-700 transition uppercase">Dispatch</button>
-                            ` : (item.status === 'Dispatched' ? '<i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>' : '')}
-                        </div>`).join('');
+                            <div class="flex gap-1">
+                                ${isActionable ? `
+                                    <button onclick="dispatchIndividualItem('${id}', ${index})" class="text-[9px] bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-black hover:bg-emerald-700 transition uppercase">Dispatch</button>
+                                    <button onclick="rejectIndividualItem('${id}', ${index})" class="text-[9px] bg-red-600 text-white px-3 py-1.5 rounded-lg font-black hover:bg-red-700 transition uppercase">Reject</button>
+                                ` : (item.status === 'Dispatched' ? '<i data-lucide="check-circle" class="w-4 h-4 text-blue-500"></i>' : (item.status === 'Rejected' ? '<i data-lucide="x-circle" class="w-4 h-4 text-red-500"></i>' : ''))}
+                            </div>
+                        </div>`;
+                    }).join('');
 
                     tableBody.innerHTML += `
                     <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4]/50 transition">
@@ -257,10 +265,13 @@
                 let items = [...orderData.items];
                 
                 items[itemIndex].status = "Dispatched";
-                const allDispatched = items.every(i => i.status === "Dispatched");
+                
+                // All items are processed if every item is either Dispatched or Rejected
+                const allProcessed = items.every(i => i.status === "Dispatched" || i.status === "Rejected");
                 
                 const updatePayload = { items: items };
-                if(allDispatched) updatePayload.status = "Dispatched";
+                if(allProcessed) updatePayload.status = "Dispatched";
+                
                 await updateDoc(orderRef, updatePayload);
 
                 const itemToDispatch = items[itemIndex];
@@ -279,6 +290,27 @@
                 });
 
                 alert("භාණ්ඩය Dispatch කළා සහ Bin Card එකට ඇතුළත් කළා!");
+            } catch (e) { alert("Error: " + e.message); }
+        };
+
+        window.rejectIndividualItem = async (orderId, itemIndex) => {
+            if(!confirm("මෙම භාණ්ඩය ප්‍රතික්ෂේප (Reject) කිරීමට අවශ්‍යද?")) return;
+            try {
+                const orderRef = doc(db, "orders", orderId);
+                const orderSnap = await getDoc(orderRef);
+                const orderData = orderSnap.data();
+                let items = [...orderData.items];
+                
+                items[itemIndex].status = "Rejected";
+                
+                // Check if all items in order are now processed
+                const allProcessed = items.every(i => i.status === "Dispatched" || i.status === "Rejected");
+                
+                const updatePayload = { items: items };
+                if(allProcessed) updatePayload.status = "Dispatched"; // Or "Completed" based on your flow
+                
+                await updateDoc(orderRef, updatePayload);
+                alert("භාණ්ඩය සාර්ථකව ප්‍රතික්ෂේප කළා.");
             } catch (e) { alert("Error: " + e.message); }
         };
 
@@ -321,8 +353,8 @@
                 pdf.text("--------------------------------------------------", 50, 58, { align: "center" });
                 let y = 68;
                 (data.items || []).forEach(item => {
-                    pdf.text(`${item.name} (x${item.qty})`, 10, y);
-                    pdf.text(`Rs. ${(item.welfarePrice * item.qty).toLocaleString()}`, 90, y, { align: "right" });
+                    pdf.text(`${item.name} (x${item.qty}) ${item.status === 'Rejected' ? '[REJECTED]' : ''}`, 10, y);
+                    pdf.text(`Rs. ${item.status === 'Rejected' ? '0' : (item.welfarePrice * item.qty).toLocaleString()}`, 90, y, { align: "right" });
                     y += 8;
                 });
                 pdf.text("--------------------------------------------------", 50, y + 5, { align: "center" });
@@ -335,27 +367,23 @@
             }
         };
 
-        // --- Purchase Report Logic ---
         window.exportPurchaseReport = async () => {
             try {
-                // 1. Pending ඕඩර්ස් ලබා ගැනීම
                 const qOrders = query(collection(db, "orders"), where("status", "==", "Pending"));
                 const orderSnap = await getDocs(qOrders);
                 if (orderSnap.empty) return alert("දැනට පෙන්ඩින් ඕඩර්ස් කිසිවක් නොමැත!");
 
-                // 2. අයිටම් වල අවශ්‍යතාවය ගණනය කිරීම
                 const summary = {};
                 orderSnap.forEach(d => {
                     const data = d.data();
                     (data.items || []).forEach(item => {
-                        if (item.status !== "Dispatched" && item.status !== "Completed") {
+                        if (item.status !== "Dispatched" && item.status !== "Completed" && item.status !== "Rejected") {
                             if (!summary[item.name]) summary[item.name] = { needed: 0, itemId: item.itemId };
                             summary[item.name].needed += item.qty;
                         }
                     });
                 });
 
-                // 3. දැනට ඇති ස්ටොක් ප්‍රමාණයන් ලබා ගැනීම
                 const itemSnap = await getDocs(collection(db, "items"));
                 itemSnap.forEach(d => {
                     for (let name in summary) {
@@ -363,7 +391,6 @@
                     }
                 });
 
-                // 4. PDF සෑදීම
                 const { jsPDF } = window.jspdf;
                 const pdf = new jsPDF();
                 pdf.setFont("helvetica", "bold");
