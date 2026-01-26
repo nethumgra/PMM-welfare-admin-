@@ -12,16 +12,24 @@
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
         .tab-active { background-color: #059669; color: white; }
+        
+        /* Sidebar Transition */
+        .sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="bg-[#F0FDF4] text-[#064E3B] font-sans">
 
+    <div id="mobileOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
     <div class="flex min-h-screen">
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#064E3B] text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl">
-            <div class="p-8 border-b border-emerald-800/50">
-                <h1 class="text-2xl font-black italic flex items-center justify-center gap-2">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-[#064E3B] text-white sidebar-transition transform -translate-x-full lg:translate-x-0 shadow-2xl overflow-y-auto">
+            <div class="p-8 border-b border-emerald-800/50 flex justify-between items-center">
+                <h1 class="text-2xl font-black italic flex items-center gap-2">
                     <i data-lucide="box"></i> PMM Welfare.
                 </h1>
+                <button onclick="toggleSidebar()" class="lg:hidden text-white/50 hover:text-white">
+                    <i data-lucide="x"></i>
+                </button>
             </div>
             <nav class="mt-6 px-4 space-y-2">
                 <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
@@ -39,7 +47,7 @@
                 <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
                     <i data-lucide="users"></i> Staff Members
                 </a>
-                <div class="pt-20">
+                <div class="pt-10">
                     <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
                         <i data-lucide="log-out"></i> Logout
                     </button>
@@ -47,70 +55,82 @@
             </nav>
         </aside>
 
-        <main class="flex-1 lg:ml-64 p-4 lg:p-10">
-            <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                    <h2 class="text-3xl font-black text-[#064E3B]">Order Management</h2>
-                    <p class="text-[#059669] font-medium italic">Track lifecycle from Pending to Completed</p>
+        <main class="flex-1 lg:ml-72 p-4 md:p-8 lg:p-10">
+            <header class="flex flex-col gap-6 mb-8">
+                <div class="flex justify-between items-center lg:items-start">
+                    <div class="flex items-center gap-4">
+                        <button onclick="toggleSidebar()" class="lg:hidden p-3 bg-white rounded-2xl shadow-sm border border-emerald-100 text-[#059669]">
+                            <i data-lucide="menu"></i>
+                        </button>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-black text-[#064E3B]">Order Management</h2>
+                            <p class="text-[#059669] text-sm font-medium italic hidden md:block">Track lifecycle from Pending to Completed</p>
+                        </div>
+                    </div>
+                    
+                    <div class="hidden lg:flex items-center gap-3">
+                        <div class="bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#DCFCE7] text-right">
+                            <p class="font-black text-[#064E3B]" id="adminNameDisplay">Admin</p>
+                            <p class="text-[10px] uppercase tracking-widest text-[#059669] font-bold">Main Admin</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="exportPurchaseReport()" class="bg-blue-50 text-blue-600 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase hover:bg-blue-600 hover:text-white transition border border-blue-100 flex items-center gap-2">
+
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="exportPurchaseReport()" class="flex-1 md:flex-none bg-blue-50 text-blue-600 px-5 py-3 rounded-2xl text-[10px] font-black uppercase hover:bg-blue-600 hover:text-white transition border border-blue-100 flex items-center justify-center gap-2">
                         <i data-lucide="shopping-cart" class="w-4 h-4"></i> Purchase Report
                     </button>
                     
-                    <button onclick="clearAllOrders()" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition border border-red-100 flex items-center gap-2">
+                    <button onclick="clearAllOrders()" class="flex-1 md:flex-none bg-red-50 text-red-600 px-5 py-3 rounded-2xl text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition border border-red-100 flex items-center justify-center gap-2">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> Clear History
                     </button>
-                    
-                    <div class="bg-white py-2 px-6 rounded-2xl shadow-sm border border-[#DCFCE7] text-right">
-                        <p class="font-black text-[#064E3B]" id="adminNameDisplay">Admin</p>
-                        <p class="text-[10px] uppercase tracking-widest text-[#059669] font-bold">Main Admin</p>
-                    </div>
                 </div>
             </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8">
                 <div class="bg-white p-6 rounded-[2.5rem] border border-[#DCFCE7] shadow-sm flex items-center gap-6">
-                    <div class="bg-emerald-100 p-4 rounded-3xl text-emerald-600"><i data-lucide="trending-up"></i></div>
+                    <div class="bg-emerald-100 p-4 rounded-3xl text-emerald-600 shrink-0"><i data-lucide="trending-up"></i></div>
                     <div>
                         <p class="text-[10px] font-bold text-[#059669] uppercase tracking-widest">Total Staff Savings</p>
-                        <p class="text-2xl font-black text-emerald-600" id="totalSavingsDisplay">Rs. 0.00</p>
+                        <p class="text-xl md:text-2xl font-black text-emerald-600" id="totalSavingsDisplay">Rs. 0.00</p>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-[2.5rem] border border-[#DCFCE7] shadow-sm flex items-center gap-6">
-                    <div class="bg-emerald-50 p-4 rounded-3xl text-[#064E3B]"><i data-lucide="shopping-cart"></i></div>
+                    <div class="bg-emerald-50 p-4 rounded-3xl text-[#064E3B] shrink-0"><i data-lucide="shopping-cart"></i></div>
                     <div>
                         <p class="text-[10px] font-bold text-[#059669] uppercase tracking-widest">Total Welfare Sales</p>
-                        <p class="text-2xl font-black text-[#064E3B]" id="totalRevenueDisplay">Rs. 0.00</p>
+                        <p class="text-xl md:text-2xl font-black text-[#064E3B]" id="totalRevenueDisplay">Rs. 0.00</p>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-4 mb-8">
-                <div class="relative flex-1 min-w-[300px]">
+            <div class="flex flex-col xl:flex-row items-stretch gap-4 mb-8">
+                <div class="relative flex-1">
                     <input type="text" id="orderSearchInput" oninput="loadOrders()" placeholder="Search Order No or Staff Name..." 
-                        class="w-full bg-white border border-[#DCFCE7] text-[#064E3B] text-sm font-bold py-4 px-12 rounded-full focus:outline-none focus:ring-2 focus:ring-[#059669] shadow-sm">
+                        class="w-full bg-white border border-[#DCFCE7] text-[#064E3B] text-sm font-bold py-4 px-12 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#059669] shadow-sm">
                     <i data-lucide="search" class="absolute left-5 top-1/2 -translate-y-1/2 text-[#059669] w-5 h-5"></i>
                 </div>
 
-                <div class="bg-white p-2 rounded-[2rem] shadow-sm border border-[#DCFCE7] flex gap-1 overflow-x-auto w-fit">
-                    <button onclick="setStatusFilter('all')" id="tab-all" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition tab-active">All</button>
-                    <button onclick="setStatusFilter('Pending')" id="tab-Pending" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Pending</button>
-                    <button onclick="setStatusFilter('Dispatched')" id="tab-Dispatched" class="tab-btn px-6 py-3 rounded-full text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4]">Dispatched</button>
-                </div>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="bg-white p-2 rounded-2xl shadow-sm border border-[#DCFCE7] flex gap-1 overflow-x-auto no-scrollbar">
+                        <button onclick="setStatusFilter('all')" id="tab-all" class="tab-btn px-6 py-3 rounded-xl text-[10px] font-black uppercase transition tab-active whitespace-nowrap">All</button>
+                        <button onclick="setStatusFilter('Pending')" id="tab-Pending" class="tab-btn px-6 py-3 rounded-xl text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4] whitespace-nowrap">Pending</button>
+                        <button onclick="setStatusFilter('Dispatched')" id="tab-Dispatched" class="tab-btn px-6 py-3 rounded-xl text-[10px] font-black uppercase transition text-[#059669] hover:bg-[#F0FDF4] whitespace-nowrap">Dispatched</button>
+                    </div>
 
-                <div class="relative min-w-[180px]">
-                  <select id="positionFilter" onchange="setPositionFilter(this.value)" 
-                        class="w-full bg-white border border-[#DCFCE7] text-[#064E3B] text-[10px] font-black uppercase py-4 px-6 rounded-full appearance-none focus:outline-none focus:ring-2 focus:ring-[#059669] shadow-sm cursor-pointer">
-                        <option value="all">All Positions</option>
-                  </select>
-                  <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 text-[#059669] w-4 h-4 pointer-events-none"></i>
+                    <div class="relative">
+                      <select id="positionFilter" onchange="setPositionFilter(this.value)" 
+                            class="w-full bg-white border border-[#DCFCE7] text-[#064E3B] text-[10px] font-black uppercase py-4 px-6 pr-12 rounded-2xl appearance-none focus:outline-none focus:ring-2 focus:ring-[#059669] shadow-sm cursor-pointer h-full">
+                            <option value="all">All Positions</option>
+                      </select>
+                      <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 text-[#059669] w-4 h-4 pointer-events-none"></i>
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-[3rem] shadow-sm border border-[#DCFCE7] overflow-hidden">
+            <div class="bg-white rounded-[2rem] md:rounded-[3rem] shadow-sm border border-[#DCFCE7] overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left min-w-[900px]">
                         <thead>
                             <tr class="bg-[#F0FDF4] text-[#059669] text-[10px] uppercase tracking-widest border-b border-[#DCFCE7]">
                                 <th class="p-6">Order No & Items</th>
@@ -150,6 +170,19 @@
         let unsubscribeOrders = null;
         let currentAdminName = "Admin";
 
+        // Sidebar Control
+        window.toggleSidebar = () => {
+            const sb = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            if (sb.classList.contains('-translate-x-full')) {
+                sb.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sb.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -157,9 +190,23 @@
                     currentAdminName = userDoc.data().name;
                     document.getElementById('adminNameDisplay').innerText = currentAdminName;
                     loadOrders();
+                    loadPositionOptions();
                 } else { window.location.href = "admin-login.html"; }
             } else { window.location.href = "admin-login.html"; }
         });
+
+        // Load Unique Positions to Select
+        async function loadPositionOptions() {
+            const select = document.getElementById('positionFilter');
+            const rolesSnap = await getDocs(collection(db, "roles"));
+            rolesSnap.forEach(roleDoc => {
+                const roleName = roleDoc.data().name;
+                const opt = document.createElement('option');
+                opt.value = roleName;
+                opt.innerText = roleName;
+                select.appendChild(opt);
+            });
+        }
 
         window.loadOrders = () => {
             const tableBody = document.getElementById('ordersTableBody');
@@ -197,6 +244,7 @@
                     let statusClass = "bg-amber-100 text-amber-600";
                     if(order.status === "Dispatched") statusClass = "bg-blue-100 text-blue-600";
                     if(order.status === "Completed") statusClass = "bg-emerald-100 text-emerald-600";
+                    if(order.status === "Cancelled") statusClass = "bg-red-100 text-red-600";
 
                     let itemsHtml = (order.items || []).map((item, index) => {
                         const isActionable = (item.status !== 'Dispatched' && item.status !== 'Rejected' && order.status !== 'Cancelled');
@@ -243,7 +291,7 @@
                             <p class="text-[9px] text-emerald-600">Savings: Rs. ${order.savings.toLocaleString()}</p>
                         </td>
                         <td class="p-6 text-right">
-                            <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2 rounded-xl hover:bg-[#064E3B] transition">
+                            <button onclick="downloadAdminInvoice('${id}')" class="bg-[#059669] text-white p-2.5 rounded-xl hover:bg-[#064E3B] transition">
                                 <i data-lucide="download" class="w-4 h-4"></i>
                             </button>
                         </td>
@@ -266,9 +314,7 @@
                 
                 items[itemIndex].status = "Dispatched";
                 
-                // All items are processed if every item is either Dispatched or Rejected
                 const allProcessed = items.every(i => i.status === "Dispatched" || i.status === "Rejected");
-                
                 const updatePayload = { items: items };
                 if(allProcessed) updatePayload.status = "Dispatched";
                 
@@ -303,11 +349,9 @@
                 
                 items[itemIndex].status = "Rejected";
                 
-                // Check if all items in order are now processed
                 const allProcessed = items.every(i => i.status === "Dispatched" || i.status === "Rejected");
-                
                 const updatePayload = { items: items };
-                if(allProcessed) updatePayload.status = "Dispatched"; // Or "Completed" based on your flow
+                if(allProcessed) updatePayload.status = "Dispatched";
                 
                 await updateDoc(orderRef, updatePayload);
                 alert("භාණ්ඩය සාර්ථකව ප්‍රතික්ෂේප කළා.");
