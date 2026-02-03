@@ -245,14 +245,24 @@
             }
         };
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists() && userDoc.data().role === "admin") {
-                    document.getElementById('adminNameDisplay').innerText = userDoc.data().name;
-                } else { window.location.href = "admin-login.html"; }
-            } else { window.location.href = "admin-login.html"; }
-        });
+       onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const userData = userDoc.data();
+
+        if (userData.role === "admin") {
+            // පර්මිෂන් පරීක්ෂාව
+            const hasAccess = userData.isSuperAdmin || userData.email === "admin@inventory.com" || (userData.permissions && userData.permissions.staff);
+
+            if (hasAccess) {
+                document.getElementById('adminNameDisplay').innerText = userData.name;
+            } else {
+                alert("ඔබට Staff Members පිටුවට පිවිසීමට අවසර නැත!");
+                window.location.href = "admin.html";
+            }
+        } else { window.location.href = "admin-login.html"; }
+    } else { window.location.href = "admin-login.html"; }
+});
 
         // --- ROLE MANAGEMENT ---
         onSnapshot(collection(db, "roles"), (snap) => {

@@ -223,20 +223,35 @@
             }
         };
 
-        // --- AUTH CHECK ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                const data = userDoc.data();
-                if(data.role === "admin") {
-                    if(data.isSuperAdmin || data.email === "admin@inventory.com") {
-                        document.getElementById('superAdminSection').classList.remove('hidden');
-                        loadAdmins();
-                    }
-                    loadSettings();
-                } else { window.location.href = "admin-login.html"; }
-            } else { window.location.href = "admin-login.html"; }
-        });
+      onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const data = userDoc.data();
+
+        if (data.role === "admin") {
+            // 1. පිටුවට ඇතුළු වීමට අවසර තිබේදැයි පරීක්ෂා කිරීම (Access Guard)
+            const hasAccess = data.isSuperAdmin || data.email === "admin@inventory.com" || (data.permissions && data.permissions.settings);
+
+            if (!hasAccess) {
+                alert("සමාවන්න! ඔබට මෙම පිටුවට (Settings) පිවිසීමට අවසර නැත.");
+                window.location.href = "admin.html"; // අවසර නැත්නම් Dashboard එකට හරවා යැවීම
+                return;
+            }
+
+            // 2. Super Admin ට පමණක් පෙනෙන කොටස (Admin Creation Form)
+            if (data.isSuperAdmin || data.email === "admin@inventory.com") {
+                document.getElementById('superAdminSection').classList.remove('hidden');
+                loadAdmins();
+            }
+            
+            loadSettings(); // පර්මිෂන් තියෙනවා නම් විතරක් සෙටින්ග්ස් ලෝඩ් කිරීම
+        } else { 
+            window.location.href = "admin-login.html"; 
+        }
+    } else { 
+        window.location.href = "admin-login.html"; 
+    }
+});
 
         async function loadSettings() {
             const siteSnap = await getDoc(doc(db, "settings", "site"));

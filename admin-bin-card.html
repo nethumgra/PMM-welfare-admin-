@@ -222,15 +222,26 @@
     document.getElementById('closeSidebar').addEventListener('click', toggleSidebar);
     elements.overlay.addEventListener('click', toggleSidebar);
 
-    // Auth & Init
     onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const adminDoc = await getDoc(doc(db, "users", user.uid));
-            if(adminDoc.exists()) currentAdminName = adminDoc.data().name;
-            loadItemsDropdown();
-            setupLogsListener();
+    if (user) {
+        const adminDoc = await getDoc(doc(db, "users", user.uid));
+        const userData = adminDoc.data();
+
+        if (userData.role === "admin") {
+            // පර්මිෂන් පරීක්ෂාව
+            const hasAccess = userData.isSuperAdmin || userData.email === "admin@inventory.com" || (userData.permissions && userData.permissions.binCard);
+
+            if (hasAccess) {
+                currentAdminName = userData.name;
+                loadItemsDropdown();
+                setupLogsListener();
+            } else {
+                alert("ඔබට Bin Card පිටුවට පිවිසීමට අවසර නැත!");
+                window.location.href = "admin.html";
+            }
         } else { window.location.href = "admin-login.html"; }
-    });
+    } else { window.location.href = "admin-login.html"; }
+});
 
     function loadItemsDropdown() {
         onSnapshot(collection(db, "items"), (snap) => {

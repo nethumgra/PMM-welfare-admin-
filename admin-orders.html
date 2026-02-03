@@ -187,16 +187,26 @@
         };
 
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists() && userDoc.data().role === "admin") {
-                    currentAdminName = userDoc.data().name;
-                    document.getElementById('adminNameDisplay').innerText = currentAdminName;
-                    loadOrders();
-                    loadPositionOptions();
-                } else { window.location.href = "admin-login.html"; }
-            } else { window.location.href = "admin-login.html"; }
-        });
+    if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const userData = userDoc.data();
+
+        if (userData.role === "admin") {
+            // පර්මිෂන් පරීක්ෂාව
+            const hasAccess = userData.isSuperAdmin || userData.email === "admin@inventory.com" || (userData.permissions && userData.permissions.orders);
+
+            if (hasAccess) {
+                currentAdminName = userData.name;
+                document.getElementById('adminNameDisplay').innerText = currentAdminName;
+                loadOrders();
+                loadPositionOptions();
+            } else {
+                alert("ඔබට Orders පිටුවට පිවිසීමට අවසර නැත!");
+                window.location.href = "admin.html";
+            }
+        } else { window.location.href = "admin-login.html"; }
+    } else { window.location.href = "admin-login.html"; }
+});
 
         // Load Unique Positions to Select
         async function loadPositionOptions() {
@@ -327,7 +337,7 @@
                 const itemRef = doc(db, "items", itemToDispatch.itemId);
                 const itemSnap = await getDoc(itemRef);
                 
-                await addDoc(collection(db, "inventory_logs"), {
+               await addDoc(collection(db, "inventory_logs"), {
                     itemId: itemToDispatch.itemId,
                     itemName: itemToDispatch.name,
                     type: "OUT",
@@ -335,6 +345,7 @@
                     balance: itemSnap.exists() ? itemSnap.data().stock : 0,
                     processedBy: currentAdminName,
                     createdAt: new Date(),
+                    orderNo: orderData.orderNo || orderId.substring(0,8), // Order ID එක පැහැදිලිව ලබා දීම
                     note: `Dispatched from Order #${orderData.orderNo || orderId.substring(0,8)}`
                 });
 
