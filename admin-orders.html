@@ -11,7 +11,10 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
-        .tab-active { background-color: #059669; color: white; }
+      .tab-active { 
+    background-color: #059669 !important; 
+    color: white !important; 
+}
         
         /* Sidebar Transition */
         .sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -339,24 +342,62 @@
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        window.rejectIndividualItem = async (orderId, itemIndex) => {
-            if(!confirm("මෙම භාණ්ඩය ප්‍රතික්ෂේප (Reject) කිරීමට අවශ්‍යද?")) return;
-            try {
-                const orderRef = doc(db, "orders", orderId);
-                const orderSnap = await getDoc(orderRef);
-                const orderData = orderSnap.data();
-                let items = [...orderData.items];
-                
-                items[itemIndex].status = "Rejected";
-                
-                const allProcessed = items.every(i => i.status === "Dispatched" || i.status === "Rejected");
-                const updatePayload = { items: items };
-                if(allProcessed) updatePayload.status = "Dispatched";
-                
-                await updateDoc(orderRef, updatePayload);
-                alert("භාණ්ඩය සාර්ථකව ප්‍රතික්ෂේප කළා.");
-            } catch (e) { alert("Error: " + e.message); }
-        };
+       window.rejectIndividualItem = async (orderId, itemIndex) => {
+    if(!confirm("මෙම භාණ්ඩය ප්‍රතික්ෂේප (Reject) කිරීමට අවශ්‍යද? එවිට ඕඩර් එකේ මුළු එකතුවද අඩු වනු ඇත.")) return;
+    
+    try {
+        const orderRef = doc(db, "orders", orderId);
+        const orderSnap = await getDoc(orderRef);
+        const orderData = orderSnap.data();
+        let items = [...orderData.items];
+        
+        // ප්‍රතික්ෂේප කරන අයිතමය තෝරා ගැනීම
+        const rejectedItem = items[itemIndex];
+
+        // දැනටමත් Reject කර ඇත්නම් නැවත අඩු කිරීම වැළැක්වීමට
+        if (rejectedItem.status === "Rejected") {
+            alert("මෙම භාණ්ඩය දැනටමත් ප්‍රතික්ෂේප කර ඇත.");
+            return;
+        }
+
+        // 1. අයිතමයේ මිල ගණන් ගණනය කිරීම
+        const itemWelfareTotal = rejectedItem.welfarePrice * rejectedItem.qty;
+        const itemSavingsTotal = (rejectedItem.mrpPrice - rejectedItem.welfarePrice) * rejectedItem.qty;
+
+        // 2. අයිතමයේ ස්ටේටස් එක වෙනස් කිරීම
+        items[itemIndex].status = "Rejected";
+
+        // 3. ඕඩර් එකේ මුළු එකතුව (Total) සහ ඉතිරිය (Savings) යාවත්කාලීන කිරීම
+        const newTotal = orderData.total - itemWelfareTotal;
+        const newSavings = orderData.savings - itemSavingsTotal;
+
+      const allProcessed = items.every(i => i.status === "Dispatched" || i.status === "Rejected");
+// සියලුම අයිතම ප්‍රතික්ෂේප (Rejected) වී ඇත්දැයි පරීක්ෂා කිරීම
+const areAllRejected = items.every(i => i.status === "Rejected");
+
+const updatePayload = { 
+    items: items,
+    total: Math.max(0, newTotal), 
+    savings: Math.max(0, newSavings)
+};
+
+if (allProcessed) {
+    if (areAllRejected) {
+        // සියලුම අයිතම Rejected නම් මුළු ඕඩර් එකම Cancelled ලෙස පෙන්වයි
+        updatePayload.status = "Cancelled";
+    } else {
+        // අවම වශයෙන් එකක් හෝ Dispatched වී ඇත්නම් Dispatched ලෙස පෙන්වයි
+        updatePayload.status = "Dispatched";
+    }
+}
+
+await updateDoc(orderRef, updatePayload);
+        
+        alert("භාණ්ඩය ප්‍රතික්ෂේප කළා සහ මුළු එකතුව යාවත්කාලීන කළා.");
+    } catch (e) { 
+        alert("Error: " + e.message); 
+    }
+};
 
         window.setStatusFilter = (status) => {
             currentStatusFilter = status;
@@ -380,37 +421,94 @@
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        window.downloadAdminInvoice = async (orderId) => {
-            const docSnap = await getDoc(doc(db, "orders", orderId));
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ unit: 'mm', format: [100, 150] });
-                pdf.setFont("helvetica", "bold");
-                pdf.setTextColor(5, 150, 105); 
-                pdf.text("PMM WELFARE RECEIPT", 50, 15, { align: "center" });
-                pdf.setTextColor(0, 0, 0); pdf.setFontSize(9);
-                pdf.text(`Order No: #${data.orderNo || orderId.substring(0,8)}`, 10, 30);
-                pdf.text(`Staff: ${data.staffName}`, 10, 38);
-                pdf.text(`Role: ${data.userPosition}`, 10, 44);
-                pdf.text(`Date: ${data.createdAt?.toDate().toLocaleDateString()}`, 10, 50);
-                pdf.text("--------------------------------------------------", 50, 58, { align: "center" });
-                let y = 68;
-                (data.items || []).forEach(item => {
-                    pdf.text(`${item.name} (x${item.qty}) ${item.status === 'Rejected' ? '[REJECTED]' : ''}`, 10, y);
-                    pdf.text(`Rs. ${item.status === 'Rejected' ? '0' : (item.welfarePrice * item.qty).toLocaleString()}`, 90, y, { align: "right" });
-                    y += 8;
-                });
-                pdf.text("--------------------------------------------------", 50, y + 5, { align: "center" });
-                pdf.setFontSize(11);
-                pdf.text(`TOTAL: Rs. ${data.total.toLocaleString()}`, 10, y + 15);
-                pdf.setFontSize(9);
-                pdf.setTextColor(5, 150, 105);
-                pdf.text(`You Saved: Rs. ${data.savings.toLocaleString()}`, 10, y + 22);
-                pdf.save(`Order_${data.orderNo || orderId.substring(0,5)}.pdf`);
-            }
-        };
+window.downloadAdminInvoice = async (orderId) => {
+    const docSnap = await getDoc(doc(db, "orders", orderId));
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        const { jsPDF } = window.jspdf;
+        // කොළය ටිකක් දිගට ගත්තා අයිටම් ගොඩක් තිබ්බොත් පේන්න
+        const pdf = new jsPDF({ unit: 'mm', format: [100, 160] });
+        
+        // ඕඩර් එක කැන්සල් වී ඇත්දැයි පරීක්ෂා කිරීම
+        const isCancelled = data.status === 'Cancelled';
 
+        // Header
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(5, 150, 105); 
+        pdf.text("PMM WELFARE RECEIPT", 50, 15, { align: "center" });
+        
+        // ඕඩර් එක කැන්සල් නම් රතු පාටින් "ORDER CANCELLED" ලේබලය එක් කිරීම
+        if (isCancelled) {
+            pdf.setTextColor(220, 38, 38); // රතු පැහැය
+            pdf.setFontSize(14);
+            pdf.text("ORDER CANCELLED", 50, 22, { align: "center" });
+        }
+
+        // Order Info
+        pdf.setTextColor(0, 0, 0); 
+        pdf.setFontSize(9);
+        // කැන්සල් නෝටිස් එක නිසා අකුරු පල්ලෙහාට ගත්තා
+        const startY = isCancelled ? 32 : 30;
+        pdf.text(`Order No: #${data.orderNo || orderId.substring(0,8)}`, 10, startY);
+        pdf.text(`Staff: ${data.staffName}`, 10, startY + 8);
+        pdf.text(`Role: ${data.userPosition}`, 10, startY + 14);
+        pdf.text(`Date: ${data.createdAt?.toDate().toLocaleDateString()}`, 10, startY + 20);
+        
+        pdf.setDrawColor(220, 220, 220);
+        pdf.line(10, startY + 25, 90, startY + 25);
+        
+        let y = startY + 35;
+        (data.items || []).forEach(item => {
+            const isRejected = item.status === 'Rejected';
+            // ඕඩර් එක කැන්සල් නම් සියලු අයිතම කැන්සල් ලෙස පෙන්වයි
+            const statusText = isCancelled ? 'CANCELLED' : (item.status ? item.status.toUpperCase() : 'PENDING');
+            
+            // අයිටම් එකේ නම (Bold)
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(8);
+            
+            // කැන්සල් හෝ රීජෙක්ට් නම් රතු පැහැයෙන් පෙන්වීම
+            if(isCancelled || isRejected) pdf.setTextColor(220, 38, 38);
+            else pdf.setTextColor(0, 0, 0);
+            
+            pdf.text(`${item.name} (x${item.qty})`, 10, y);
+            
+            // මිල පෙන්වීම (කැන්සල් නම් Rs. 0 පෙන්වයි)
+            const priceLabel = (isCancelled || isRejected) ? "Rs. 0" : `Rs. ${(item.welfarePrice * item.qty).toLocaleString()}`;
+            pdf.text(priceLabel, 90, y, { align: "right" });
+            
+            // ස්ටේටස් එක පල්ලෙහායින් (Normal font)
+            y += 4;
+            pdf.setFont("helvetica", "normal");
+            pdf.setFontSize(7);
+            pdf.text(`Status: ${statusText}`, 10, y);
+            
+            y += 8; // පරතරය වැඩි කළා Overlap වීම වැළැක්වීමට
+            pdf.setTextColor(0, 0, 0); // වර්ණය Reset කිරීම
+        });
+        
+        pdf.setDrawColor(220, 220, 220);
+        pdf.line(10, y, 90, y);
+        
+        // Final Totals
+        y += 10;
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(11);
+        
+        // කැන්සල් ඕඩර් එකක මුළු එකතුව සහ ඉතිරිය 0 ලෙස සකස් කිරීම
+        const finalTotal = isCancelled ? 0 : (data.total || 0);
+        const finalSavings = isCancelled ? 0 : (data.savings || 0);
+
+        pdf.text(`TOTAL: Rs. ${finalTotal.toLocaleString()}`, 10, y);
+        
+        y += 7;
+        pdf.setFontSize(9);
+        pdf.setTextColor(5, 150, 105);
+        pdf.text(`Welfare Savings: Rs. ${finalSavings.toLocaleString()}`, 10, y);
+        
+        pdf.save(`Order_${data.orderNo || orderId.substring(0,5)}.pdf`);
+    }
+};
         window.exportPurchaseReport = async () => {
             try {
                 const qOrders = query(collection(db, "orders"), where("status", "==", "Pending"));

@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bin Card - PMM Welfare Shop</title>
+    <title>Advanced Bin Card - PMM Welfare Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        ::-webkit-scrollbar { width: 8px; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #F0FDF4; }
         ::-webkit-scrollbar-thumb { background: #059669; border-radius: 10px; }
         
-        /* Sidebar transition smooth කිරීමට */
-        .sidebar-transition {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-[#F0FDF4] text-[#064E3B] font-sans overflow-x-hidden">
+<body class="bg-[#F8FAFC] text-[#064E3B] overflow-x-hidden">
 
-    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+    <div id="overlay" class="fixed inset-0 bg-black/50 z-40 hidden backdrop-blur-sm"></div>
 
     <div class="flex min-h-screen">
         <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-[#064E3B] text-white sidebar-transition transform -translate-x-full lg:translate-x-0 shadow-2xl overflow-y-auto">
@@ -36,7 +37,7 @@
                 <a href="admin.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="layout-dashboard"></i> Dashboard
                 </a>
-                <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600/30 border border-emerald-500/30 transition">
+                <a href="admin-bin-card.html" class="flex items-center gap-3 p-4 rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-900/20">
                     <i data-lucide="clipboard-list"></i> Bin Card
                 </a>
                 <a href="admin-items.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
@@ -45,16 +46,13 @@
                 <a href="admin-orders.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
                     <i data-lucide="shopping-bag"></i> Orders
                 </a>
-                <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
-                    <i data-lucide="users"></i> Staff Members
-                </a>
-                <a href="admin-settings.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition group">
-                    <i data-lucide="settings"></i> System Settings
+                <a href="admin-staff.html" class="flex items-center gap-3 p-4 rounded-2xl hover:bg-emerald-600/20 transition">
+                    <i data-lucide="users"></i> Staff
                 </a>
                 
-                <div class="pt-10 pb-10">
-                    <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500 transition text-red-100">
-                        <i data-lucide="log-out"></i> Logout
+                <div class="pt-10">
+                    <button id="logoutBtn" class="flex items-center gap-3 p-4 w-full rounded-2xl hover:bg-red-500/20 transition text-red-400 font-bold">
+                        <i data-lucide="log-out"></i> Sign Out
                     </button>
                 </div>
             </nav>
@@ -62,84 +60,116 @@
 
         <main class="flex-1 lg:ml-72 p-4 md:p-8 lg:p-10 w-full">
             
-            <header class="mb-10 flex flex-col gap-6">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <button id="menuBtn" class="lg:hidden p-3 bg-white rounded-2xl shadow-sm text-[#064E3B] border border-[#DCFCE7]">
+            <header class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <button id="menuBtn" class="lg:hidden p-2 bg-white rounded-xl shadow-sm border border-emerald-100">
                             <i data-lucide="menu"></i>
                         </button>
-                        <div>
-                            <h2 class="text-2xl md:text-3xl font-black text-[#064E3B]">Inventory Bin Card</h2>
-                            <p class="text-[#059669] text-sm md:text-base font-medium italic">Monitor stock movements and handles</p>
-                        </div>
+                        <h2 class="text-3xl font-black tracking-tight">Inventory Bin Card</h2>
                     </div>
-                    
-                    <button id="clearBinsBtn" class="hidden md:flex bg-red-50 text-red-500 px-6 py-3 rounded-2xl font-black text-[11px] uppercase hover:bg-red-500 hover:text-white transition-all items-center justify-center gap-2 border border-red-100 shadow-sm active:scale-95 group">
-                        <i data-lucide="trash-2" class="w-4 h-4 group-hover:animate-bounce"></i> Clear History
-                    </button>
+                    <p class="text-emerald-600 font-medium mt-1">Audit trail & stock movement history</p>
                 </div>
 
-                <button id="clearBinsBtnMobile" class="md:hidden w-full bg-red-50 text-red-500 p-4 rounded-2xl font-black text-[11px] uppercase border border-red-100 flex items-center justify-center gap-2 active:scale-95">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i> Clear History
-                </button>
+                <div class="flex items-center gap-3">
+                    <button id="exportBtn" class="flex-1 md:flex-none bg-white text-emerald-700 px-5 py-3 rounded-2xl font-bold text-sm border border-emerald-100 shadow-sm hover:bg-emerald-50 transition flex items-center justify-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Export CSV
+                    </button>
+                    <button id="clearBinsBtn" class="flex-1 md:flex-none bg-red-50 text-red-600 px-5 py-3 rounded-2xl font-bold text-sm border border-red-100 shadow-sm hover:bg-red-600 hover:text-white transition flex items-center justify-center gap-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Clear Logs
+                    </button>
+                </div>
             </header>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-[#DCFCE7]">
-                        <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-[#064E3B]">
-                            <i data-lucide="refresh-ccw" class="text-[#059669]"></i> Stock Adjustment
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-emerald-600 text-white p-6 rounded-[2rem] shadow-xl shadow-emerald-900/10">
+                    <p class="text-emerald-100 text-xs font-black uppercase tracking-widest mb-1">Total Stock In</p>
+                    <h3 id="statTotalIn" class="text-3xl font-black">0</h3>
+                </div>
+                <div class="bg-orange-500 text-white p-6 rounded-[2rem] shadow-xl shadow-orange-900/10">
+                    <p class="text-orange-100 text-xs font-black uppercase tracking-widest mb-1">Total Returns</p>
+                    <h3 id="statTotalReturn" class="text-3xl font-black">0</h3>
+                </div>
+                <div class="bg-white border border-emerald-100 p-6 rounded-[2rem] shadow-sm">
+                    <p class="text-emerald-600 text-xs font-black uppercase tracking-widest mb-1">Transactions</p>
+                    <h3 id="statCount" class="text-3xl font-black text-[#064E3B]">0</h3>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+                <div class="xl:col-span-1 space-y-6">
+                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-emerald-50">
+                        <h3 class="font-black mb-6 flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="text-emerald-500"></i> Manual Entry
                         </h3>
                         <div class="space-y-4">
                             <div>
-                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Select Product</label>
-                                <select id="itemSelect" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-sm text-[#064E3B] focus:ring-2 focus:ring-emerald-500 outline-none mt-1">
-                                    <option value="" disabled selected>Choose Product</option>
+                                <label class="text-[10px] font-bold text-emerald-600 uppercase ml-2 tracking-widest">Product</label>
+                                <select id="itemSelect" class="w-full p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100 font-bold text-sm outline-none mt-1 focus:ring-2 focus:ring-emerald-500 transition-all cursor-pointer">
+                                    <option value="" disabled selected>Select Product</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold text-[#059669] uppercase ml-2 tracking-widest">Quantity</label>
-                                <input type="number" id="stockQty" placeholder="Ex: 50" class="w-full p-4 rounded-2xl bg-[#F0FDF4] border border-[#DCFCE7] font-bold text-[#064E3B] outline-none mt-1">
+                                <label class="text-[10px] font-bold text-emerald-600 uppercase ml-2 tracking-widest">Quantity</label>
+                                <input type="number" id="stockQty" placeholder="00" class="w-full p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100 font-bold outline-none mt-1 focus:ring-2 focus:ring-emerald-500 transition-all">
                             </div>
-                            
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                                <button id="restockBtn" class="bg-emerald-600 text-white p-4 rounded-2xl font-black hover:bg-emerald-700 transition text-[11px] uppercase tracking-tighter">Add Stock (In)</button>
-                                <button id="returnBtn" class="bg-orange-500 text-white p-4 rounded-2xl font-black hover:bg-orange-600 transition text-[11px] uppercase tracking-tighter">Return Stock</button>
+                            <div class="grid grid-cols-2 gap-3 pt-2">
+                                <button id="restockBtn" class="bg-emerald-600 text-white p-4 rounded-2xl font-black hover:bg-emerald-700 transition text-[10px] uppercase tracking-tighter shadow-lg shadow-emerald-900/10">Add Stock</button>
+                                <button id="returnBtn" class="bg-orange-500 text-white p-4 rounded-2xl font-black hover:bg-orange-600 transition text-[10px] uppercase tracking-tighter shadow-lg shadow-orange-900/10">Return Item</button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-emerald-900 text-white p-6 md:p-8 rounded-[2.5rem] shadow-xl">
-                        <h4 class="text-xs font-black uppercase tracking-widest opacity-60 mb-3">Filter History</h4>
-                        <select id="filterProduct" class="w-full p-4 rounded-2xl bg-emerald-800 border border-emerald-700 font-bold text-sm text-white outline-none">
-                            <option value="all">View All Transactions</option>
-                        </select>
+                    <div class="bg-[#064E3B] text-white p-6 rounded-[2.5rem] shadow-xl">
+                        <h4 class="text-[10px] font-black uppercase tracking-widest opacity-60 mb-4">Filter & Search</h4>
+                        <div class="space-y-4">
+                            <div class="relative">
+                                <i data-lucide="search" class="absolute left-4 top-4 w-4 h-4 text-emerald-400"></i>
+                                <input type="text" id="searchInput" placeholder="Search Item/ID..." class="w-full p-4 pl-12 rounded-2xl bg-emerald-900 border border-emerald-800 font-bold text-sm text-white outline-none focus:ring-2 focus:ring-emerald-500">
+                            </div>
+                            <select id="filterProduct" class="w-full p-4 rounded-2xl bg-emerald-900 border border-emerald-800 font-bold text-sm text-white outline-none cursor-pointer">
+                                <option value="all">All Categories</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-2">
-                    <div class="bg-white p-4 md:p-8 rounded-[2.5rem] md:rounded-[3rem] shadow-sm border border-[#DCFCE7]">
-                        <h3 class="text-xl font-black text-[#064E3B] mb-6 px-2">Transaction History</h3>
-                        <div class="overflow-x-auto rounded-2xl">
-                            <table class="w-full text-left border-collapse min-w-[600px]">
+                <div class="xl:col-span-3">
+                    <div class="bg-white rounded-[2.5rem] shadow-sm border border-emerald-50 overflow-hidden">
+                        <div class="p-6 md:p-8 border-b border-emerald-50 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <h3 class="text-xl font-black tracking-tight">Movement Logs</h3>
+                            <div class="flex items-center gap-2 bg-emerald-50 p-1.5 rounded-xl">
+                                <input type="date" id="dateFilter" class="bg-transparent font-bold text-xs uppercase text-emerald-700 outline-none p-1">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[700px]">
                                 <thead>
-                                    <tr class="text-[#059669] text-[10px] uppercase tracking-widest border-b border-[#F0FDF4]">
-                                        <th class="pb-4 px-4">Date & ID</th>
-                                        <th class="pb-4">Product</th>
-                                        <th class="pb-4">Type</th>
-                                        <th class="pb-4">Qty</th>
-                                        <th class="pb-4">Balance</th>
-                                        <th class="pb-4">User</th>
+                                    <tr class="text-emerald-600 text-[10px] uppercase tracking-[0.2em] bg-emerald-50/30">
+                                        <th class="py-5 px-8">Transaction Info</th>
+                                        <th class="py-5">Product Name</th>
+                                        <th class="py-5 text-center">Type</th>
+                                        <th class="py-5 text-center">Qty</th>
+                                        <th class="py-5 text-center">Stock Bal</th>
+                                        <th class="py-5 px-8 text-right">Performed By</th>
                                     </tr>
                                 </thead>
-                                <tbody id="binCardBody" class="text-sm font-medium">
+                                <tbody id="binCardBody" class="text-sm font-medium divide-y divide-emerald-50">
                                     </tbody>
                             </table>
                         </div>
-                        
-                        <div id="noData" class="hidden text-center py-10">
-                            <i data-lucide="inbox" class="w-12 h-12 text-gray-300 mx-auto mb-2"></i>
-                            <p class="text-gray-400 font-bold">No transactions found</p>
+
+                        <div id="noData" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                            <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-4">
+                                <i data-lucide="database-zap" class="w-10 h-10 text-emerald-200"></i>
+                            </div>
+                            <p class="text-emerald-900 font-black text-lg">No records found</p>
+                            <p class="text-emerald-500 text-sm italic">Try adjusting your filters</p>
+                        </div>
+
+                        <div id="loading" class="flex justify-center py-20">
+                            <div class="animate-spin rounded-full h-10 w-10 border-4 border-emerald-500 border-t-transparent"></div>
                         </div>
                     </div>
                 </div>
@@ -165,159 +195,203 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     let currentAdminName = "Admin";
+    let allLogs = [];
 
-    // --- Responsive Sidebar Logic ---
-    const sidebar = document.getElementById('sidebar');
-    const menuBtn = document.getElementById('menuBtn');
-    const closeSidebar = document.getElementById('closeSidebar');
-    const overlay = document.getElementById('overlay');
+    // UI Elements
+    const elements = {
+        sidebar: document.getElementById('sidebar'),
+        overlay: document.getElementById('overlay'),
+        tableBody: document.getElementById('binCardBody'),
+        itemSelect: document.getElementById('itemSelect'),
+        filterProduct: document.getElementById('filterProduct'),
+        statIn: document.getElementById('statTotalIn'),
+        statReturn: document.getElementById('statTotalReturn'),
+        statCount: document.getElementById('statCount'),
+        loading: document.getElementById('loading'),
+        noData: document.getElementById('noData'),
+        searchInput: document.getElementById('searchInput'),
+        dateFilter: document.getElementById('dateFilter')
+    };
 
-    function toggleSidebar() {
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
-        document.body.classList.toggle('overflow-hidden');
-    }
+    // Responsive Sidebar Logic
+    const toggleSidebar = () => {
+        elements.sidebar.classList.toggle('-translate-x-full');
+        elements.overlay.classList.toggle('hidden');
+    };
+    document.getElementById('menuBtn').addEventListener('click', toggleSidebar);
+    document.getElementById('closeSidebar').addEventListener('click', toggleSidebar);
+    elements.overlay.addEventListener('click', toggleSidebar);
 
-    menuBtn.addEventListener('click', toggleSidebar);
-    closeSidebar.addEventListener('click', toggleSidebar);
-    overlay.addEventListener('click', toggleSidebar);
-
-    // Auth State
+    // Auth & Init
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const adminDoc = await getDoc(doc(db, "users", user.uid));
             if(adminDoc.exists()) currentAdminName = adminDoc.data().name;
             loadItemsDropdown();
-            loadBinCardLogs('all');
+            setupLogsListener();
         } else { window.location.href = "admin-login.html"; }
     });
 
     function loadItemsDropdown() {
-        const select = document.getElementById('itemSelect');
-        const filter = document.getElementById('filterProduct');
         onSnapshot(collection(db, "items"), (snap) => {
-            select.innerHTML = '<option value="" disabled selected>Choose Product</option>';
-            filter.innerHTML = '<option value="all">View All Transactions</option>';
+            elements.itemSelect.innerHTML = '<option value="" disabled selected>Select Product</option>';
+            elements.filterProduct.innerHTML = '<option value="all">All Categories</option>';
             snap.forEach(d => {
                 const opt = `<option value="${d.id}">${d.data().name}</option>`;
-                select.innerHTML += opt;
-                filter.innerHTML += opt;
+                elements.itemSelect.innerHTML += opt;
+                elements.filterProduct.innerHTML += opt;
             });
         });
     }
 
-    async function handleStockChange(type) {
-        const itemId = document.getElementById('itemSelect').value;
-        const qty = parseInt(document.getElementById('stockQty').value);
-        if(!itemId || !qty || qty <= 0) return alert("Select product and enter valid quantity.");
+async function handleStockChange(type) {
+    const itemId = elements.itemSelect.value;
+    const qty = parseInt(document.getElementById('stockQty').value);
+    if(!itemId || !qty || qty <= 0) return alert("Error: Please select a product and valid quantity.");
 
-        try {
-            const itemRef = doc(db, "items", itemId);
-            const itemSnap = await getDoc(itemRef);
-            const currentStock = itemSnap.data().stock || 0;
-            const newBalance = currentStock + qty; 
+    try {
+        const itemRef = doc(db, "items", itemId);
+        const itemSnap = await getDoc(itemRef);
+        const currentStock = itemSnap.data().stock || 0;
 
-            await updateDoc(itemRef, { stock: newBalance });
-
-            await addDoc(collection(db, "inventory_logs"), {
-                itemId,
-                itemName: itemSnap.data().name,
-                type: type,
-                qty: qty,
-                balance: newBalance,
-                processedBy: currentAdminName,
-                createdAt: new Date(),
-                orderNo: type === "RETURN" ? "STOCK-RETURN" : "MANUAL-IN",
-                transactionId: "TRX-" + Math.floor(100000 + Math.random() * 900000)
-            });
-
-            alert(`Stock ${type === 'IN' ? 'Restocked' : 'Returned'} Successfully!`);
-            document.getElementById('stockQty').value = '';
-        } catch (e) { alert(e.message); }
-    }
-
-    function loadBinCardLogs(filterId) {
-        const table = document.getElementById('binCardBody');
-        const noData = document.getElementById('noData');
-        let q = query(collection(db, "inventory_logs"), orderBy("createdAt", "desc"), limit(50));
-        
-        if(filterId !== 'all') {
-            q = query(collection(db, "inventory_logs"), where("itemId", "==", filterId), orderBy("createdAt", "desc"));
+        // --- වැදගත්ම කොටස: Admin කරන Return එක ස්ටොක් එකෙන් අඩු කරනවා ---
+        let newBalance;
+        if (type === 'IN') {
+            newBalance = currentStock + qty; // ස්ටොක් එකතු කිරීම
+        } else if (type === 'RETURN') {
+            if (qty > currentStock) return alert("පවතින තොගයට වඩා වැඩි ප්‍රමාණයක් රිටර්න් කළ නොහැක!");
+            newBalance = currentStock - qty; // වෙයාර් හවුස් එකට යවන නිසා ස්ටොක් එකෙන් අඩු කිරීම
         }
+
+        await updateDoc(itemRef, { stock: newBalance });
+
+        await addDoc(collection(db, "inventory_logs"), {
+            itemId,
+            itemName: itemSnap.data().name,
+            type: type, // 'RETURN'
+            qty: qty,
+            balance: newBalance,
+            // හඳුනාගැනීම සඳහා "Manual-Return" ලේබලය එක් කරනවා
+            processedBy: currentAdminName + " (Manual-Return)", 
+            createdAt: new Date(),
+            orderNo: type === "RETURN" ? "WH-RETURN" : "MANUAL-IN"
+        });
+
+        document.getElementById('stockQty').value = '';
+        alert(`භාණ්ඩ ${qty} ප්‍රමාණයක් සාර්ථකව ස්ටොක් එකෙන් අඩු කර වෙයාර් හවුස් වෙත යැවුවා!`);
+    } catch (e) { alert("Error: " + e.message); }
+}
+
+
+    function setupLogsListener() {
+        elements.loading.classList.remove('hidden');
+        const q = query(collection(db, "inventory_logs"), orderBy("createdAt", "desc"), limit(100));
         
         onSnapshot(q, (snap) => {
-            table.innerHTML = '';
-            if(snap.empty) {
-                noData.classList.remove('hidden');
-            } else {
-                noData.classList.add('hidden');
-                snap.forEach(d => {
-                    const log = d.data();
-                    const type = log.type || "IN";
-                    let badgeClass = "bg-emerald-100 text-emerald-600";
-                    if(type === "OUT") badgeClass = "bg-red-100 text-red-600";
-                    if(type === "RETURN") badgeClass = "bg-orange-100 text-orange-600";
-
-                    const displayId = log.orderNo || log.transactionId || d.id.substring(0,8);
-                    const formattedDate = log.createdAt?.toDate().toLocaleDateString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
-
-                    table.innerHTML += `
-                        <tr class="border-b border-[#F0FDF4] hover:bg-[#F0FDF4]/80 transition">
-                            <td class="py-5 px-4">
-                                <p class="text-[11px] font-bold text-[#059669]">${formattedDate}</p>
-                                <p class="text-[9px] font-black text-[#064E3B] uppercase tracking-tighter opacity-50">${displayId}</p>
-                            </td>
-                            <td class="py-5 font-black text-[#064E3B] pr-2">${log.itemName}</td>
-                            <td class="py-5">
-                                <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${badgeClass}">${type}</span>
-                            </td>
-                            <td class="py-5 font-black ${type === 'OUT' ? 'text-red-500' : 'text-emerald-600'}">${type === 'OUT' ? '-' : '+'}${log.qty}</td>
-                            <td class="py-5 font-black text-[#064E3B] text-lg">
-                                ${log.balance !== undefined ? log.balance : '---'}
-                            </td>
-                            <td class="py-5 text-[10px] italic font-bold text-[#059669] pr-4">${log.processedBy || 'System'}</td>
-                        </tr>`;
-                });
-            }
-            lucide.createIcons();
+            allLogs = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            applyFilters();
+            elements.loading.classList.add('hidden');
         });
     }
 
-    async function clearAllInventoryLogs() {
-        if (!confirm("අවදානම: සියලුම Bin Card දත්ත මැකී යනු ඇත. ඔබට මෙය විශ්වාසද?")) return;
+    function applyFilters() {
+        const searchTerm = elements.searchInput.value.toLowerCase();
+        const productFilter = elements.filterProduct.value;
+        const dateVal = elements.dateFilter.value;
 
-        const btn = document.getElementById('clearBinsBtn');
-        const btnMob = document.getElementById('clearBinsBtnMobile');
-        
-        [btn, btnMob].forEach(b => {
-            b.disabled = true;
-            b.innerHTML = `⏳ Clearing...`;
+        const filtered = allLogs.filter(log => {
+            const matchesSearch = log.itemName.toLowerCase().includes(searchTerm) || (log.orderNo && log.orderNo.toLowerCase().includes(searchTerm));
+            const matchesProduct = productFilter === 'all' || log.itemId === productFilter;
+            const matchesDate = !dateVal || log.createdAt?.toDate().toISOString().split('T')[0] === dateVal;
+            return matchesSearch && matchesProduct && matchesDate;
         });
 
-        try {
-            const querySnapshot = await getDocs(collection(db, "inventory_logs"));
-            const deletePromises = querySnapshot.docs.map(docSnap => deleteDoc(docSnap.ref));
-            await Promise.all(deletePromises);
-            alert("History එක සාර්ථකව මකා දැමුවා!");
-        } catch (error) {
-            alert("වැරැද්දක් වුණා: " + error.message);
-        } finally {
-            location.reload(); // දත්ත මැකූ පසු refresh කිරීම වඩාත් සුදුසුයි
+        renderTable(filtered);
+        updateStats(filtered);
+    }
+
+    function renderTable(logs) {
+        elements.tableBody.innerHTML = '';
+        if(logs.length === 0) {
+            elements.noData.classList.remove('hidden');
+            return;
         }
+        elements.noData.classList.add('hidden');
+
+        logs.forEach(log => {
+            const isOut = log.type === 'OUT' || log.processedBy?.includes('Return');
+            const badgeColor = log.type === 'IN' ? 'bg-emerald-100 text-emerald-600' : 
+                               log.type === 'OUT' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600';
+            
+            const dateStr = log.createdAt?.toDate().toLocaleDateString('en-GB', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+
+            elements.tableBody.innerHTML += `
+                <tr class="hover:bg-emerald-50/50 transition cursor-default">
+                    <td class="py-5 px-8">
+                        <p class="text-[11px] font-black text-emerald-700">${dateStr}</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${log.orderNo || log.id.substring(0,8)}</p>
+                    </td>
+                    <td class="py-5 font-bold text-slate-700">${log.itemName}</td>
+                    <td class="py-5 text-center">
+                        <span class="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${badgeColor}">${log.type}</span>
+                    </td>
+                    <td class="py-5 text-center font-black ${isOut ? 'text-red-500' : 'text-emerald-600'}">
+                        ${isOut ? '-' : '+'}${log.qty}
+                    </td>
+                    <td class="py-5 text-center font-black text-slate-800 text-base">${log.balance ?? '---'}</td>
+                    <td class="py-5 px-8 text-right text-[10px] font-bold text-emerald-600 italic">${log.processedBy || 'System'}</td>
+                </tr>`;
+        });
+        lucide.createIcons();
     }
 
-    // Event Listeners
+    function updateStats(logs) {
+        let totalIn = 0;
+        let totalReturn = 0;
+        logs.forEach(l => {
+            if(l.type === 'IN') totalIn += l.qty;
+            if(l.type === 'RETURN') totalReturn += l.qty;
+        });
+        elements.statIn.innerText = totalIn;
+        elements.statReturn.innerText = totalReturn;
+        elements.statCount.innerText = logs.length;
+    }
+
+    // Export to CSV Function
+    function exportToCSV() {
+        if(allLogs.length === 0) return alert("No data to export");
+        let csvContent = "data:text/csv;charset=utf-8,Date,Product,Type,Qty,Balance,User\n";
+        allLogs.forEach(l => {
+            const row = `${l.createdAt?.toDate().toLocaleString()},${l.itemName},${l.type},${l.qty},${l.balance},${l.processedBy}`;
+            csvContent += row + "\n";
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `BinCard_Report_${new Date().toLocaleDateString()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+    }
+
+    async function clearAllLogs() {
+        if (!confirm("CRITICAL WARNING: This will permanently delete ALL movement history. Proceed?")) return;
+        try {
+            const snap = await getDocs(collection(db, "inventory_logs"));
+            await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+            alert("History Cleared!");
+        } catch (e) { alert("Error: " + e.message); }
+    }
+
+    // Listeners
     document.getElementById('restockBtn').addEventListener('click', () => handleStockChange('IN'));
     document.getElementById('returnBtn').addEventListener('click', () => handleStockChange('RETURN'));
-    document.getElementById('clearBinsBtn').addEventListener('click', clearAllInventoryLogs);
-    document.getElementById('clearBinsBtnMobile').addEventListener('click', clearAllInventoryLogs);
-    
-    document.getElementById('filterProduct').addEventListener('change', (e) => {
-        loadBinCardLogs(e.target.value);
-    });
+    document.getElementById('clearBinsBtn').addEventListener('click', clearAllLogs);
+    document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+    elements.filterProduct.addEventListener('change', applyFilters);
+    elements.searchInput.addEventListener('input', applyFilters);
+    elements.dateFilter.addEventListener('change', applyFilters);
+    document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
-    document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "admin-login.html"));
-    
     lucide.createIcons();
 </script>
 </body>
