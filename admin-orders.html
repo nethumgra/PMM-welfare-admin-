@@ -138,6 +138,7 @@
                             <tr class="bg-[#F0FDF4] text-[#059669] text-[10px] uppercase tracking-widest border-b border-[#DCFCE7]">
                                 <th class="p-6">Order No & Items</th>
                                 <th class="p-6">Staff Member</th>
+                                <th class="p-6">Date</th>
                                 <th class="p-6 text-center">Status</th>
                                 <th class="p-6">Financials</th>
                                 <th class="p-6 text-right">Actions</th>
@@ -172,6 +173,7 @@
         let currentPositionFilter = 'all';
         let unsubscribeOrders = null;
         let currentAdminName = "Admin";
+        let canClearOrders = false;
 
         // Sidebar Control
         window.toggleSidebar = () => {
@@ -186,26 +188,28 @@
             }
         };
 
-        onAuthStateChanged(auth, async (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         const userData = userDoc.data();
 
         if (userData.role === "admin") {
-            // පර්මිෂන් පරීක්ෂාව
             const hasAccess = userData.isSuperAdmin || userData.email === "admin@inventory.com" || (userData.permissions && userData.permissions.orders);
-
+            
             if (hasAccess) {
+                // Clear History අවසරය තියෙනවද බලන්න
+                canClearOrders = userData.isSuperAdmin || (userData.permissions && userData.permissions.canClearOrders);
+                
                 currentAdminName = userData.name;
                 document.getElementById('adminNameDisplay').innerText = currentAdminName;
                 loadOrders();
                 loadPositionOptions();
             } else {
-                alert("ඔබට Orders පිටුවට පිවිසීමට අවසර නැත!");
+                alert("අවසර නැත!");
                 window.location.href = "admin.html";
             }
-        } else { window.location.href = "admin-login.html"; }
-    } else { window.location.href = "admin-login.html"; }
+        }
+    }
 });
 
         // Load Unique Positions to Select
@@ -295,6 +299,10 @@
                         <td class="p-6">
                             <p class="font-bold text-sm text-[#064E3B]">${staffName}</p>
                             <p class="text-[10px] text-[#059669] uppercase italic font-bold">${order.userPosition || 'Staff'}</p>
+                        </td>
+                        <td class="p-6">
+                            <p class="font-bold text-sm text-[#064E3B] whitespace-nowrap">${order.createdAt?.toDate ? order.createdAt.toDate().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'}) : '—'}</p>
+                            <p class="text-[10px] text-gray-400 font-bold whitespace-nowrap">${order.createdAt?.toDate ? order.createdAt.toDate().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}) : ''}</p>
                         </td>
                         <td class="p-6 text-center">
                             <span class="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${statusClass}">${order.status}</span>
@@ -421,16 +429,30 @@ await updateDoc(orderRef, updatePayload);
             currentPositionFilter = pos;
             loadOrders();
         };
+window.clearAllOrders = async () => {
+    // 1. මුලින්ම අවසර තියෙනවද කියලා බලනවා
+    if (!canClearOrders) {
+        alert("සමාවන්න! ඕඩර් හිස්ට්‍රිය මැකීමට ඔබට අවසර නැත. කරුණාකර Super Admin සම්බන්ධ කරගන්න.");
+        return; // අවසර නැත්නම් මෙතනින් කෝඩ් එක නවතිනවා
+    }
 
-        window.clearAllOrders = async () => {
-            if (!confirm("අවධානයයි! සියලුම ඕඩර් හිස්ට්‍රිය මැකීමට ඔබට විශ්වාසද? මෙය නැවත ලබා ගත නොහැක.")) return;
-            try {
-                const querySnapshot = await getDocs(collection(db, "orders"));
-                const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "orders", d.id)));
-                await Promise.all(deletePromises);
-                alert("සියලුම ඕඩර් හිස්ට්‍රිය සාර්ථකව මකා දමන ලදී.");
-            } catch (e) { alert("Error: " + e.message); }
-        };
+    // 2. අවසර තියෙනවා නම් තහවුරු කිරීමක් අහනවා
+    if (!confirm("අවධානයයි! සියලුම ඕඩර් හිස්ට්‍රිය මැකීමට ඔබට විශ්වාසද? මෙය නැවත ලබා ගත නොහැක.")) return;
+
+    try {
+        const querySnapshot = await getDocs(collection(db, "orders"));
+        
+        // එකින් එක ඩිලීට් කිරීමේ පොරොන්දු (Promises) සෑදීම
+        const deletePromises = querySnapshot.docs.map(d => deleteDoc(doc(db, "orders", d.id)));
+        
+        // සියල්ල එකවර ක්‍රියාත්මක කිරීම
+        await Promise.all(deletePromises);
+        
+        alert("සියලුම ඕඩර් හිස්ට්‍රිය සාර්ථකව මකා දමන ලදී.");
+    } catch (e) { 
+        alert("Error: " + e.message); 
+    }
+};
 
 window.downloadAdminInvoice = async (orderId) => {
     const docSnap = await getDoc(doc(db, "orders", orderId));

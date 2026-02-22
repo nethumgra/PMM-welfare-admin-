@@ -196,6 +196,7 @@
     const auth = getAuth(app);
     let currentAdminName = "Admin";
     let allLogs = [];
+    let canClearBinLogs = false;
 
     // UI Elements
     const elements = {
@@ -222,25 +223,28 @@
     document.getElementById('closeSidebar').addEventListener('click', toggleSidebar);
     elements.overlay.addEventListener('click', toggleSidebar);
 
-    onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
         const adminDoc = await getDoc(doc(db, "users", user.uid));
         const userData = adminDoc.data();
 
         if (userData.role === "admin") {
-            // පර්මිෂන් පරීක්ෂාව
+            // Bin Card එකට ඇතුළු වීමට අවසර තිබේදැයි බලනවා
             const hasAccess = userData.isSuperAdmin || userData.email === "admin@inventory.com" || (userData.permissions && userData.permissions.binCard);
 
             if (hasAccess) {
+                // මෙන්න මෙතනදී Clear Logs අවසරය තියෙනවද කියලා බලනවා
+                canClearBinLogs = userData.isSuperAdmin || userData.email === "admin@inventory.com" || (userData.permissions && userData.permissions.canClearBinLogs);
+                
                 currentAdminName = userData.name;
                 loadItemsDropdown();
                 setupLogsListener();
             } else {
-                alert("ඔබට Bin Card පිටුවට පිවිසීමට අවසර නැත!");
+                alert("අවසර නැත!");
                 window.location.href = "admin.html";
             }
-        } else { window.location.href = "admin-login.html"; }
-    } else { window.location.href = "admin-login.html"; }
+        }
+    }
 });
 
     function loadItemsDropdown() {
@@ -384,15 +388,26 @@ async function handleStockChange(type) {
         link.click();
     }
 
-    async function clearAllLogs() {
-        if (!confirm("CRITICAL WARNING: This will permanently delete ALL movement history. Proceed?")) return;
-        try {
-            const snap = await getDocs(collection(db, "inventory_logs"));
-            await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
-            alert("History Cleared!");
-        } catch (e) { alert("Error: " + e.message); }
+async function clearAllLogs() {
+
+    if (!canClearBinLogs) {
+        alert("සමාවන්න! Bin Card Logs මැකීමට ඔබට අවසර නැත. කරුණාකර Super Admin සම්බන්ධ කරගන්න.");
+        return; 
     }
 
+  
+    if (!confirm("CRITICAL WARNING: This will permanently delete ALL movement history. Proceed?")) return;
+
+    try {
+        const snap = await getDocs(collection(db, "inventory_logs"));
+        
+        await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+        
+        alert("සියලුම Bin Card Logs සාර්ථකව මකා දමන ලදී!");
+    } catch (e) { 
+        alert("Error: " + e.message); 
+    }
+}
     // Listeners
     document.getElementById('restockBtn').addEventListener('click', () => handleStockChange('IN'));
     document.getElementById('returnBtn').addEventListener('click', () => handleStockChange('RETURN'));
